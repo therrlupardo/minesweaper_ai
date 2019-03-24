@@ -7,4 +7,4 @@ Rozwiązywanie sapera za pomocą sieci neuronowych.
 * [repo java](https://github.com/luckytoilet/MSolver/blob/master/MSolver.java) - repozytorium do powyższego
 * [sieć neuronowa python](https://github.com/ryanbaldini/MineSweeperNeuralNet) - repozytorium z gotową, wytrenowaną siecią neuronową rozwiązującą sapera. Chyba ten sam autor co powyższe.
 * [macierze](https://massaioli.wordpress.com/2013/01/12/solving-minesweeper-with-matricies/) - rozwiązywanie sapera za pomocą macierzy. Raczej nie o to chodzi, ale może się przydać. 
-
+* [repo macierze](https://bitbucket.org/robertmassaioli/minesweeper-and-matricies/overview) - repozytorium do powyższego
