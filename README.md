@@ -2,6 +2,10 @@
 Repozytorium projektu z przedmiotu Sztuczna Inteligencja.
 Rozwiązywanie sapera za pomocą sieci neuronowych.
 
+# Najważniejsze informacje
+* Będziemy się uczyć na [saper](http://minesweeperonline.com)
+* Pobieranie danych + wykonywanie akcji: [Selenium](https://selenium-python.readthedocs.io)
+
 # Dodatkowe źródła wiedzy
 * [JAVA + logic](https://luckytoilet.wordpress.com/2012/12/23/2125/) - blog post o pisaniu AI rozwiązującym sapera.
 * [repo java](https://github.com/luckytoilet/MSolver/blob/master/MSolver.java) - repozytorium do powyższego
