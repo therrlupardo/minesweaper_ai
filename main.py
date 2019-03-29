@@ -3,13 +3,13 @@ import time
 from selenium import webdriver
 from Board import Board
 
-def sendSomeClicks(board):
+def send_some_clicks(board):
     for i in range(29):
-        if board.sendClick(0, i) == False:
-            print("YOU LOST")
+        if board.send_click(0, i) == False:
+            board.print()
             return False
         board.print()
-
+    return True
 
 if __name__ == "__main__":
     driver = webdriver.Firefox()
@@ -24,7 +24,10 @@ if __name__ == "__main__":
     board.print()
     print()
 
-    sendSomeClicks(board)
+    if send_some_clicks(board):
+        print("YOU WON!")
+    else:
+        print("YOU LOST")
 
     time.sleep(10.0)
     driver.close()

@@ -1,59 +1,53 @@
 class Field:
-    __isBomb = False        # pole jest bombą
-    __bombNeighbours = 0    # ile bomb na sąsiednich polach
-    __bombChance = 1.0      # szansa na obecność bomby na tym polu
-    __x = 0                 # (x,y) - lokacja bomby na planszy
+    __is_mine = False       # pole jest mina
+    __mine_neighbours = 0   # ile min na sąsiednich polach
+    __is_mine_chance = 1.0  # szansa na obecność miny na tym polu
+    __x = 0                 # (x,y) - lokacja miny na planszy
     __y = 0
-    __gameId = ""
-    __gameClass = ""
+    __game_id = ""
+    __game_class = ""
     __clicked = False
 
     def __init__(self, x, y):
         self.__x = x
         self.__y = y
-        self.__gameId = str(y+1)+"_"+str(x+1)
+        self.__game_id = str(y + 1) + "_" + str(x + 1)
 
-    def setBomb(self):
-        self.__isBomb = True
+    def set_mine(self):
+        self.__is_mine = True
 
-    def setGameClass(self, gameClass:""):
-        self.__gameClass = gameClass
-        if gameClass != "square blank":
+    def set_game_class(self, game_class: ""):
+        self.__game_class = game_class
+        if game_class != "square blank":
             self.__clicked = True
-            print(gameClass)
-            if gameClass == "square bombrevealed":
-                print("BOMB DETECTED! YOU LOOSE!")
-            elif gameClass == "square bombflagged":
-                self.setBomb()
-            elif gameClass == "square open0":
-                self.__bombNeighbours = 0
-            elif gameClass == "square open1":
-                self.__bombNeighbours = 1
-            elif gameClass == "square open2":
-                self.__bombNeighbours = 2
-            elif gameClass == "square open3":
-                self.__bombNeighbours = 3
-            elif gameClass == "square open4":
-                self.__bombNeighbours = 4
-            elif gameClass == "square open5":
-                self.__bombNeighbours = 5
-            elif gameClass == "square open6":
-                self.__bombNeighbours = 6
-            elif gameClass == "square open7":
-                self.__bombNeighbours = 7
-            elif gameClass == "square open8":
-                self.__bombNeighbours = 8
 
-    def getGameClass(self):
-        return self.__gameClass
+            self.__mine_neighbours = {
+                'square bombrevealed' : 'M',
+                'square bombflagged': 'F',
+                'square open0': 0,
+                'square open1': 1,
+                'square open2': 2,
+                'square open3': 3,
+                'square open4': 4,
+                'square open5': 5,
+                'square open6': 6,
+                'square open7': 7,
+                'square open8': 8,
+            }[game_class]
 
-    def getGameId(self):
-        return self.__gameId
+            if self.__mine_neighbours == 'F':
+                self.set_mine()
+
+    def get_game_class(self):
+        return self.__game_class
+
+    def get_game_id(self):
+        return self.__game_id
 
     def __str__(self):
-        if self.__isBomb:
-            return "B"
-        elif self.__clicked == False and self.__bombNeighbours == 0:
+        if self.__is_mine:
+            return "M"
+        elif self.__clicked is False and self.__mine_neighbours == 0:
             return "-"
         else:
-            return str(self.__bombNeighbours)
+            return str(self.__mine_neighbours)
