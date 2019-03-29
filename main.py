@@ -3,7 +3,6 @@ import time
 from selenium import webdriver
 from Board import Board
 
-
 if __name__ == "__main__":
     driver = webdriver.Firefox()
     driver.get("http://minesweeperonline.com")
@@ -16,11 +15,11 @@ if __name__ == "__main__":
     board = Board(game, height, width)
     board.print()
     print()
-    board.updateFields()
-    board.sendClick(0, 0)
+    board.update_fields()
+    board.send_click(0, 0)
     board.print()
 
-    board.sendClick(0, 29)
+    board.send_click(0, 29)
     board.print()
     time.sleep(10.0)
     driver.close()

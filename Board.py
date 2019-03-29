@@ -3,6 +3,7 @@ import time
 from selenium.webdriver.firefox.webdriver import WebDriver
 from Field import Field
 
+
 class Board:
     __height = 0
     __width = 0
@@ -23,16 +24,16 @@ class Board:
                 print(elem, end=" ")
             print()
 
-    def updateFields(self):
+    def update_fields(self):
         time0 = time.time()
         for row in self.__board:
             for elem in row:
-                elemClass = self.__game.find_element_by_id(elem.getGameId()).get_attribute('class')
-                if elem.getGameClass() != elemClass:
-                    elem.setGameClass(elemClass)
+                elem_class = self.__game.find_element_by_id(elem.get_game_id()).get_attribute('class')
+                if elem.get_game_class() != elem_class:
+                    elem.set_game_class(elem_class)
         print(time.time() - time0)
 
-    def sendClick(self, y, x):
-        elem:Field = self.__board[y][x]
-        self.__game.find_element_by_id(elem.getGameId()).click()
-        self.updateFields()
+    def send_click(self, y, x):
+        elem: Field = self.__board[y][x]
+        self.__game.find_element_by_id(elem.get_game_id()).click()
+        self.update_fields()
