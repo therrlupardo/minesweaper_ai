@@ -8,6 +8,7 @@ class Field:
     game_class = ""
     clicked = False
     neighbours_solved = False
+    neighbours = []
 
     def __init__(self, x, y):
         self.x = x
