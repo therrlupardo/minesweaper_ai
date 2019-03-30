@@ -12,6 +12,7 @@ class Board:
     board = []
     game: WebDriver
     driver: WebDriver
+    action_chains: ActionChains
     field_values = ["square open0", "square open1", "square open2", "square open3", "square open4", "square open5",
                       "square open6", "square open7", "square open8", "square bombflagged", "square bombrevealed"]
     neighbours_of_mines = []
@@ -19,6 +20,7 @@ class Board:
 
     def __init__(self, driver: WebDriver,game: WebDriver, height, width, mines_counter):
         self.driver = driver
+        self.action_chains = ActionChains(self.driver)
         self.game = game
         self.width = width
         self.height = height
@@ -59,55 +61,29 @@ class Board:
 
         return True
 
-    def send_click(self, y, x):
+    def send_left_click(self, y, x):
         elem: Field = self.board[y][x]
         self.game.find_element_by_id(elem.game_id).click()
         return self.update_fields()
 
+    def send_right_click(self, y, x):
+        elem: Field = self.board[y][x]
+        action_chains = ActionChains(self.driver)
+        action_chains.context_click(self.game.find_element_by_id(elem.game_id)).perform()
+        elem.set_game_class("square bombflagged")
+        self.mines_counter -= 1
+        return self.update_fields()
+
     def play(self):
         time0 = time.time()
-        self.send_click(5, 5)
+        self.send_left_click(5, 5)
         while self.simple_method():
             self.update_fields()
 
         print("Game time: " + str(time.time() - time0))
+        print("Mines left: ", self.mines_counter)
         return (self.update_fields() and self.mines_counter == 0)
 
-
-    def simple_method2(self):
-        changed_anyhing = False
-        for row in self.board:
-            elem: Field
-            for elem in row:
-                if elem.mine_neighbours != 0 and elem.neighbours_solved == False:
-
-                    possibilities = 0
-                    flagged = 0
-                    neighbour: Field
-                    for neighbour in elem.neighbours:
-                        if neighbour.game_class == "square blank":
-                            possibilities += 1
-                        if neighbour.game_class == "square bombflagged":
-                            possibilities += 1
-                            flagged += 1
-                    # wszystkie miny już były oznaczone
-                    if flagged == elem.mine_neighbours:
-                        elem.neighbours_solved = True
-                        for neighbour in elem.neighbours:
-                            if neighbour.game_class != "square bombflagged":
-                                self.game.find_element_by_id(neighbour.game_id).click()
-                                changed_anyhing = True
-
-                    # wszystkie pola sąsiadujące to miny
-                    elif possibilities == elem.mine_neighbours:
-                        elem.neighbours_solved = True
-                        for neighbour in elem.neighbours:
-                            if neighbour.game_class ==  "square blank":
-                                action_chains = ActionChains(self.driver)
-                                action_chains.context_click(self.game.find_element_by_id(neighbour.game_id)).perform()
-                                neighbour.set_game_class("square bombflagged")
-                                changed_anyhing = True
-        return changed_anyhing
 
     def simple_method(self):
         time0 = time.time()
@@ -119,6 +95,7 @@ class Board:
                 possibilities = 0
                 flagged = 0
                 neighbour: Field
+
                 for neighbour in elem.neighbours:
                     if neighbour.game_class == "square blank":
                         possibilities += 1
@@ -139,21 +116,18 @@ class Board:
                 elif possibilities == elem.mine_neighbours:
                     elem.neighbours_solved = True
                     self.neighbours_of_mines.remove(elem)
+                    print(elem.game_id)
                     for neighbour in elem.neighbours:
                         if neighbour.game_class == "square blank":
-                            action_chains = ActionChains(self.driver)
-                            action_chains.context_click(self.game.find_element_by_id(neighbour.game_id)).perform()
-                            neighbour.set_game_class("square bombflagged")
-                            self.mines_counter -= 1
-                    changed_anyhing = True
+                            self.send_right_click(neighbour.y, neighbour.x)
 
+                    changed_anyhing = True
         return changed_anyhing
 
 
-
+    # zwraca sąsiadów danego pola
     def get_field_neighbours(self, elem):
         x, y = elem.x, elem.y
-        # zwraca sąsiadów danego pola
         neighbours = []
         if y == 0:
             if x == 0:
