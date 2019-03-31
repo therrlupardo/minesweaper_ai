@@ -29,6 +29,8 @@ class BrowserHandler:
         mines_counter += int(game.find_element_by_id("mines_ones").get_attribute("class")[-1])
 
         logic_solver = LogicSolver(driver, game, height, width, mines_counter)
+        # simple_solver = SimpleSolver(driver, game, height,width,mines_counter)
+        # matrix_solver = SimpleSolver(driver, game, height,width,mines_counter)
 
         if logic_solver.play():
             wins += 1
