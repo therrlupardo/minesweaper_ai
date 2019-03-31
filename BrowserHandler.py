@@ -1,6 +1,8 @@
 import time
 
 from selenium import webdriver
+
+from Solvers.LogicSolver import LogicSolver
 from Solvers.SimpleSolver import SimpleSolver
 
 
@@ -26,9 +28,9 @@ class BrowserHandler:
         mines_counter += int(game.find_element_by_id("mines_tens").get_attribute("class")[-1]) * 10
         mines_counter += int(game.find_element_by_id("mines_ones").get_attribute("class")[-1])
 
-        simple_solver = SimpleSolver(driver, game, height, width, mines_counter)
+        logic_solver = LogicSolver(driver, game, height, width, mines_counter)
 
-        if simple_solver.play():
+        if logic_solver.play():
             wins += 1
         else:
             print("YOU LOST")
