@@ -3,7 +3,7 @@ import numpy as np
 from scipy.linalg import lu
 from selenium.webdriver import ActionChains
 from selenium.webdriver.firefox.webdriver import WebDriver
-from Field import Field
+from Minesweeper.Field import Field
 
 
 class Board:
@@ -141,6 +141,7 @@ class Board:
     # zwraca sąsiadów danego pola
     def get_field_neighbours(self, elem):
         x, y = elem.x, elem.y
+        # zwraca sąsiadów danego pola
         neighbours = []
         if y == 0:
             if x == 0:

@@ -3,6 +3,7 @@ class Field:
     mine_neighbours:int = 0   # ile min na sąsiednich polach
     is_mine_chance = 0.0  # szansa na obecność miny na tym polu
     x = 0                 # (x,y) - lokacja miny na planszy
+
     y = 0
     game_id = ""
     game_class = ""
@@ -25,7 +26,7 @@ class Field:
             self.clicked = True
 
             self.mine_neighbours = {
-                'square bombrevealed' : 'M',
+                'square bombrevealed': 'M',
                 'square bombflagged': 'F',
                 'square open0': 0,
                 'square open1': 1,
