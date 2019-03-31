@@ -1,3 +1,5 @@
+from math import floor
+
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 from Minesweeper.Board import Board
@@ -14,13 +16,12 @@ class LogicSolver:
 
     def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
         self.game_board = Board(driver, game, height, width, mines_counter)
-        self.simple_solver = SimpleSolver(self.game_board)
-        self.matrix_solver = MatrixSolver()
-
+        self.simple_solver = SimpleSolver(driver, game, height, width, mines_counter)
+        self.matrix_solver = MatrixSolver(driver, game, height, width, mines_counter)
 
     def play(self):
         time0 = time.time()
-        self.game_board.send_left_click(0, 0)
+        self.game_board.send_left_click(floor(self.game_board.height/2), floor(self.game_board.width/2))
         self.matrix_solver.matrix_method(self.game_board)
 
         repeat = True

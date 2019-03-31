@@ -1,13 +1,28 @@
+from math import floor
+
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 from Minesweeper.Board import Board
 from Minesweeper.Field import Field
-
+import time
 
 class MatrixSolver:
+    game_board: Board
 
-    def __init__(self):
+    def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
+        self.game_board = Board(driver, game, height, width, mines_counter) # needed only if playing only this strategy
         print("MatrixSolver initialized")
+
+    def play(self):
+        time0 = time.time()
+        self.game_board.send_left_click(floor(self.game_board.height/2), floor(self.game_board.width/2))
+
+        while self.matrix_method(self.game_board):
+            self.game_board.update_fields()
+
+        print("Game time: " + str(time.time() - time0))
+        print("Mines left: ", self.game_board.mines_counter)
+        return (self.game_board.update_fields() and self.game_board.mines_counter == 0)
 
     def matrix_method(self, game_board):
         changed_anything = False

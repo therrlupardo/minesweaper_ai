@@ -17,6 +17,7 @@ class Board:
                     "square open6", "square open7", "square open8", "square bombflagged", "square bombrevealed"]
     neighbours_of_mines = []
     mines = []
+
     def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
         self.driver = driver
         self.game = game
