@@ -20,6 +20,8 @@ class SimpleSolver:
 
         while self.simple_method(self.game_board):
             self.game_board.update_fields()
+            if self.game_board.game.find_element_by_id("face").get_attribute("class") == "facewin":
+                break
 
         print("Game time: " + str(time.time() - time0))
         print("Mines left: ", self.game_board.mines_counter)

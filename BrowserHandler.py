@@ -14,9 +14,9 @@ class BrowserHandler:
 
         driver = webdriver.Firefox()
 
-        # driver.get("http://minesweeperonline.com/#beginner")
+        driver.get("http://minesweeperonline.com/#beginner")
         # driver.get("http://minesweeperonline.com/#intermediate")
-        driver.get("http://minesweeperonline.com")
+        # driver.get("http://minesweeperonline.com")
 
         assert "Minesweeper Online" in driver.title
 
@@ -34,6 +34,7 @@ class BrowserHandler:
 
         if logic_solver.play():
             wins += 1
+            print("YOU WON")
         else:
             print("YOU LOST")
         # board.print()
