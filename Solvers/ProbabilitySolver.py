@@ -12,7 +12,7 @@ class ProbabilitySolver:
 
     def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
         self.game_board = Board(driver, game, height, width, mines_counter) # needed only if playing only this strategy
-        print("ProbabilitySolver initialized")
+
 
     def play(self):
         time0 = time.time()
@@ -29,8 +29,6 @@ class ProbabilitySolver:
                 if elem.get_attribute("style") != "display: none;":
                     elem.click()
 
-        print("Game time: " + str(time.time() - time0))
-        print("Mines left: ", self.game_board.mines_counter)
         return (self.game_board.update_fields() and self.game_board.mines_counter == 0)
 
     def probability_method(self, game_board):
@@ -43,8 +41,4 @@ class ProbabilitySolver:
                     if neighbour not in matrix_columns:
                         matrix_columns.append(neighbour)
 
-        # tmp = list(itertools.product(str('01'), repeat=len(matrix_columns)))
-        # for i in tmp:
-        #     print(i)
-        # print(len(tmp))
         return changed_anything

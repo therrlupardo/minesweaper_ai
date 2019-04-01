@@ -11,7 +11,8 @@ class MatrixSolver:
 
     def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
         self.game_board = Board(driver, game, height, width, mines_counter) # needed only if playing only this strategy
-        print("MatrixSolver initialized")
+
+
 
     def play(self):
         time0 = time.time()
@@ -28,8 +29,6 @@ class MatrixSolver:
                 if elem.get_attribute("style") != "display: none;":
                     elem.click()
 
-        print("Game time: " + str(time.time() - time0))
-        print("Mines left: ", self.game_board.mines_counter)
         return (self.game_board.update_fields() and self.game_board.mines_counter == 0)
 
     def matrix_method(self, game_board):
@@ -60,6 +59,7 @@ class MatrixSolver:
             for neighbour in elem.neighbours:
                 if neighbour.game_class == "square bombflagged":
                     value += 1
+
             solutions.append(int(elem.mine_neighbours) - value)
 
         for i in range(len(matrix)):

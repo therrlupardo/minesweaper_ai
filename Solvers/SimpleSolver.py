@@ -11,7 +11,6 @@ class SimpleSolver:
     game_board: Board
 
     def __init__(self,driver: WebDriver, game: WebDriver, height, width, mines_counter):
-        print("SimpleSolver initialized")
         self.game_board = Board(driver, game, height, width, mines_counter) # needed only if playing only this strategy
 
     def play(self):
@@ -27,8 +26,6 @@ class SimpleSolver:
             for elem in blanks:
                 if elem.get_attribute("style") != "display: none;":
                     elem.click()
-        print("Game time: " + str(time.time() - time0))
-        print("Mines left: ", self.game_board.mines_counter)
         return (self.game_board.update_fields() and self.game_board.mines_counter == 0)
 
     def simple_method(self, game_board):

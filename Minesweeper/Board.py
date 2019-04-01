@@ -33,7 +33,6 @@ class Board:
         for row in self.board:
             for elem in row:
                 elem.neighbours = self.get_field_neighbours(elem)
-        print("Time of setting neighbours: ", (time.time() - time0))
 
     def print(self):
         for row in self.board:
@@ -53,6 +52,12 @@ class Board:
                     elem.set_game_class(name)
                     if name not in ("square open0", "square blank", "square bombflagged", "square bombsreaveled"):
                         self.neighbours_of_mines.append(elem)
+
+            for elem in self.neighbours_of_mines:
+                if elem.game_class in ("square open0", "square blank", "square bombflagged", "square bombsreaveled"):
+                    self.neighbours_of_mines.remove(elem)
+                elif elem.mine_neighbours == 'M' or elem.mine_neighbours == 'F':
+                    self.neighbours_of_mines.remove(elem)
 
             if name == self.field_values[-1]:
                 if len(fields) != 0:
@@ -74,6 +79,12 @@ class Board:
             self.mines_counter -= 1
             self.mines.append(elem.game_id)
             return self.update_fields()
+
+    def click_all_square_blanks(self):
+        blanks = self.game.find_elements_by_class_name('square.blank')
+        for elem in blanks:
+            if elem.get_attribute('style') != 'display: none;':
+                elem.click()
 
     # zwraca sąsiadów danego pola
     def get_field_neighbours(self, elem):
