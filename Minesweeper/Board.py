@@ -50,13 +50,6 @@ class Board:
                 y, x = field_id.split("_")
                 elem = self.board[int(y) - 1][int(x) - 1]
                 if elem.game_class != name:
-                    # if elem.game_class == "square bombflagged":
-                    #     self.mines_counter += 1                     # gdzieś jest bug, nie oznaczało bomb,
-                    #     # self.send_right_click(elem.y, elem.x)     # mimo iż w kodzie były oznaczone.
-                    #     action_chains = ActionChains(self.driver)   # chyba naciska 2 razy, trzeba +1 by wyrównać
-                    #     action_chains.context_click(self.game.find_element_by_id(elem.game_id)).perform()
-                    #     print("Error checker")
-                    # else:
                     elem.set_game_class(name)
                     if name not in ("square open0", "square blank", "square bombflagged", "square bombsreaveled"):
                         self.neighbours_of_mines.append(elem)

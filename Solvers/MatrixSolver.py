@@ -22,6 +22,11 @@ class MatrixSolver:
             if self.game_board.game.find_element_by_id("face").get_attribute("class") == "facewin":
                 break
 
+        if self.game_board.mines_counter == 0:
+            blanks = self.game_board.game.find_elements_by_class_name("square.blank")
+            for elem in blanks:
+                if elem.get_attribute("style") != "display: none;":
+                    elem.click()
 
         print("Game time: " + str(time.time() - time0))
         print("Mines left: ", self.game_board.mines_counter)
@@ -84,8 +89,7 @@ class MatrixSolver:
                         changed_anything = True
         return changed_anything
 
-    def eliminate(self, copy):
-        matrix = copy
+    def eliminate(self, matrix):
         cols = len(matrix[0])
         for i in range(0, min(cols - 1, len(matrix))):
             for j in range(i, len(matrix)):
