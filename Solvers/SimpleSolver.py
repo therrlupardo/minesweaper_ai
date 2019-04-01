@@ -1,8 +1,4 @@
-import time
 from math import floor
-
-from selenium.webdriver.firefox.webdriver import WebDriver
-
 from Minesweeper.Board import Board
 from Minesweeper.Field import Field
 
@@ -10,12 +6,11 @@ from Minesweeper.Field import Field
 class SimpleSolver:
     game_board: Board
 
-    def __init__(self,driver: WebDriver, game: WebDriver, height, width, mines_counter):
-        self.game_board = Board(driver, game, height, width, mines_counter) # needed only if playing only this strategy
+    def __init__(self, game_board):
+        self.game_board = game_board  # needed only if playing only this strategy
 
     def play(self):
-        time0 = time.time()
-        self.game_board.send_left_click(floor(self.game_board.height/2), floor(self.game_board.width/2))
+        self.game_board.send_left_click(floor(self.game_board.height / 2), floor(self.game_board.width / 2))
 
         while self.simple_method(self.game_board):
             self.game_board.update_fields()
@@ -26,13 +21,13 @@ class SimpleSolver:
             for elem in blanks:
                 if elem.get_attribute("style") != "display: none;":
                     elem.click()
-        return (self.game_board.update_fields() and self.game_board.mines_counter == 0)
+        return self.game_board.update_fields() and self.game_board.mines_counter == 0
 
     def simple_method(self, game_board):
         changed_anyhing = False
 
         for elem in game_board.neighbours_of_mines:
-            if elem.mine_neighbours != 0 and elem.neighbours_solved == False:
+            if elem.mine_neighbours != 0 and elem.neighbours_solved is False:
 
                 possibilities = 0
                 flagged = 0

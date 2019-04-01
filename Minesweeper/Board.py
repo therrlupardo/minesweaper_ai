@@ -1,6 +1,3 @@
-import time
-import numpy as np
-from scipy.linalg import lu
 from selenium.webdriver import ActionChains
 from selenium.webdriver.firefox.webdriver import WebDriver
 from Minesweeper.Field import Field
@@ -24,21 +21,24 @@ class Board:
         self.width = width
         self.height = height
         self.mines_counter = mines_counter
+        self.board = []
         for i in range(height):
             row = []
             for j in range(width):
                 row.append(Field(j, i))
             self.board.append(row)
-        time0 = time.time()
         for row in self.board:
             for elem in row:
                 elem.neighbours = self.get_field_neighbours(elem)
 
     def print(self):
+        i = 0
         for row in self.board:
+            print(str(i), end=" ")
             for elem in row:
-                print(elem, end=" ")
+                print(elem, end="")
             print()
+            i = i + 1
 
     def update_fields(self):
         for name in self.field_values:
@@ -118,4 +118,3 @@ class Board:
                           self.board[y][x - 1], self.board[y][x + 1],
                           self.board[y + 1][x - 1], self.board[y + 1][x], self.board[y + 1][x + 1]]
         return neighbours
-

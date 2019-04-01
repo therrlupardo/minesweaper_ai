@@ -1,22 +1,18 @@
 from math import floor
-
-from selenium.webdriver.firefox.webdriver import WebDriver
-
 from Minesweeper.Board import Board
 from Minesweeper.Field import Field
 import time
 
+
 class MatrixSolver:
     game_board: Board
 
-    def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
-        self.game_board = Board(driver, game, height, width, mines_counter) # needed only if playing only this strategy
-
-
+    def __init__(self, game_board):
+        self.game_board = game_board  # needed only if playing only this strategy
 
     def play(self):
         time0 = time.time()
-        self.game_board.send_left_click(floor(self.game_board.height/2), floor(self.game_board.width/2))
+        self.game_board.send_left_click(floor(self.game_board.height / 2), floor(self.game_board.width / 2))
 
         while self.matrix_method(self.game_board):
             self.game_board.update_fields()
@@ -29,7 +25,7 @@ class MatrixSolver:
                 if elem.get_attribute("style") != "display: none;":
                     elem.click()
 
-        return (self.game_board.update_fields() and self.game_board.mines_counter == 0)
+        return self.game_board.update_fields() and self.game_board.mines_counter == 0
 
     def matrix_method(self, game_board):
         changed_anything = False
@@ -68,20 +64,20 @@ class MatrixSolver:
         matrix = self.eliminate(matrix)
 
         for row in matrix:
-            sumAbs = 0
+            sum_abs = 0
             sum = 0
             for elem in row:
-                sumAbs += abs(elem)
+                sum_abs += abs(elem)
                 sum += elem
-            sumAbs -= abs(row[-1])
+            sum_abs -= abs(row[-1])
             sum -= row[-1]
-            if sumAbs == abs(row[-1]):
+            if sum_abs == abs(row[-1]):
                 for i in range(len(row) - 1):
                     if row[i] != 0:
                         elem: Field = matrix_columns[i]
                         game_board.send_right_click(elem.y, elem.x)
                         changed_anything = True
-            elif abs(sum) == sumAbs and row[-1] == 0:
+            elif abs(sum) == sum_abs and row[-1] == 0:
                 for i in range(len(row) - 1):
                     if row[i] != 0:
                         elem: Field = matrix_columns[i]
@@ -111,4 +107,3 @@ class MatrixSolver:
                             matrix[j][elem] += matrix[i][elem]
 
         return matrix
-

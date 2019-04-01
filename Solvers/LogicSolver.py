@@ -15,22 +15,23 @@ class LogicSolver:
 
     def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
         self.game_board = Board(driver, game, height, width, mines_counter)
-        self.simple_solver = SimpleSolver(driver, game, height, width, mines_counter)
-        self.matrix_solver = MatrixSolver(driver, game, height, width, mines_counter)
-        self.probability_solver = ProbabilitySolver(driver, game, height, width, mines_counter)
+        self.simple_solver = SimpleSolver(self.game_board)
+        self.matrix_solver = MatrixSolver(self.game_board)
+        self.probability_solver = ProbabilitySolver(self.game_board)
 
     def play(self):
         self.game_board.send_left_click(floor(self.game_board.height / 2), floor(self.game_board.width / 2))
 
         self.game_board.update_fields()
-        # self.matrix_solver.matrix_method(self.game_board)
 
         while self.game_board.game.find_element_by_id('face').get_attribute("class") == 'facesmile':
             if self.game_board.mines_counter == 0:
                 self.game_board.click_all_square_blanks()
             else:
                 self.game_board.update_fields()
-                if self.simple_solver.simple_method(self.game_board):
+                if self.matrix_solver.matrix_method(self.game_board):
+                    self.game_board.update_fields()
+                elif self.simple_solver.simple_method(self.game_board):
                     self.game_board.update_fields()
                 else:
                     blanks = self.game_board.game.find_elements_by_class_name('square.blank')

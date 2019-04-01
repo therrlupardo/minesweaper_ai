@@ -10,9 +10,11 @@ from Minesweeper.Board import Board
 class ProbabilitySolver:
     game_board: Board
 
-    def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
-        self.game_board = Board(driver, game, height, width, mines_counter) # needed only if playing only this strategy
+    # def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
+    #     self.game_board = Board(driver, game, height, width, mines_counter) # needed only if playing only this strategy
 
+    def __init__(self, game_board):
+        self.game_board = game_board # needed only if playing only this strategy
 
     def play(self):
         time0 = time.time()
