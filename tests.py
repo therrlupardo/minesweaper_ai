@@ -3,12 +3,12 @@ import os
 wins = 0
 tries = 0
 errors = []
-for i in range(5):
+for i in range(50):
     print("Running test", i)
     elem = os.popen('python main.py').read()
     tries += 1
     if elem == "1\n":
-        wins+=1
+        wins += 1
     elif elem != "0\n":
         errors.append(elem)
     print("Winrate:", wins / tries * 100, '%')
