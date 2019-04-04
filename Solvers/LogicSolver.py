@@ -1,3 +1,4 @@
+import time
 from math import floor
 from random import randrange
 from selenium.webdriver.firefox.webdriver import WebDriver
@@ -14,6 +15,7 @@ class LogicSolver:
     probability_solver: ProbabilitySolver
 
     def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
+        self.game = game  # tmp
         self.game_board = Board(driver, game, height, width, mines_counter)
         self.simple_solver = SimpleSolver(self.game_board)
         self.matrix_solver = MatrixSolver(self.game_board)
@@ -24,15 +26,19 @@ class LogicSolver:
 
         self.game_board.update_fields()
 
-        while self.game_board.game.find_element_by_id('face').get_attribute("class") == 'facesmile':
+        game_time = 0
+
+        while self.game_board.game.find_element_by_id('face').get_attribute("class") == 'facesmile' and game_time < 999:
             if self.game_board.mines_counter == 0:
                 self.game_board.click_all_square_blanks()
             else:
                 self.game_board.update_fields()
                 if self.matrix_solver.matrix_method(self.game_board):
                     self.game_board.update_fields()
+                    print('matrix')
                 elif self.simple_solver.simple_method(self.game_board):
                     self.game_board.update_fields()
+                    print('simple')
                 else:
                     blanks = self.game_board.game.find_elements_by_class_name('square.blank')
                     elems = []
@@ -42,6 +48,9 @@ class LogicSolver:
                     if len(elems) > 0:
                         i = int(randrange(len(elems)))
                         elems[i].click()
+            game_time = int(self.game.find_element_by_id('seconds_hundreds').get_attribute('class')[-1]) * 100
+            game_time += int(self.game.find_element_by_id('seconds_tens').get_attribute('class')[-1]) * 10
+            game_time += int(self.game.find_element_by_id('seconds_ones').get_attribute('class')[-1])
 
         out = True if self.game_board.game.find_element_by_id('face').get_attribute("class") == 'facewin' else False
         del self.game_board

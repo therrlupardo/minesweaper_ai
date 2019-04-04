@@ -11,7 +11,6 @@ class MatrixSolver:
         self.game_board = game_board  # needed only if playing only this strategy
 
     def play(self):
-        time0 = time.time()
         self.game_board.send_left_click(floor(self.game_board.height / 2), floor(self.game_board.width / 2))
 
         while self.matrix_method(self.game_board):
@@ -75,14 +74,16 @@ class MatrixSolver:
                 for i in range(len(row) - 1):
                     if row[i] != 0:
                         elem: Field = matrix_columns[i]
-                        game_board.send_right_click(elem.y, elem.x)
-                        changed_anything = True
+                        if neighbour.game_class == "square blank":
+                            game_board.send_right_click(elem.y, elem.x)
+                            changed_anything = True
             elif abs(sum) == sum_abs and row[-1] == 0:
                 for i in range(len(row) - 1):
                     if row[i] != 0:
                         elem: Field = matrix_columns[i]
-                        game_board.send_left_click(elem.y, elem.x)
-                        changed_anything = True
+                        if neighbour.game_class == "square blank":
+                            game_board.send_left_click(elem.y, elem.x)
+                            changed_anything = True
         return changed_anything
 
     def eliminate(self, matrix):

@@ -3,7 +3,6 @@ class Field:
     mine_neighbours: int = 0    # ile min na sąsiednich polach
     is_mine_chance = 0.0        # szansa na obecność miny na tym polu
     x = 0                       # (x,y) - lokacja miny na planszy
-
     y = 0
     game_id = ""
     game_class = ""
@@ -16,6 +15,12 @@ class Field:
         self.y = y
         self.game_id = str(y + 1) + "_" + str(x + 1)
         self.game_class = "square blank"
+
+        # dla pewnosci
+        self.is_mine = False
+        self.clicked = False
+        self.neighbours_solved = False
+        self.neighbours = []
 
     def set_mine(self):
         self.is_mine = True

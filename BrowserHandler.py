@@ -10,7 +10,7 @@ from Solvers.SimpleSolver import SimpleSolver
 class BrowserHandler:
     def __init__(self):
         wins = 0
-        games = 4
+        games = 20
 
         driver = webdriver.Firefox()
         driver.get("http://minesweeperonline.com/#beginner")
@@ -29,10 +29,12 @@ class BrowserHandler:
 
             if logic_solver.play():
                 wins += 1
-                print("1")
-            else:
-                print("0")
+                # print("1")
+            # else:
+            #     print("0")
 
+            time.sleep(2.0)
+            print(str(i + 1) + ". test - winrate: " + str(wins / (i + 1) * 100) + "%")
             # driver.refresh()
             driver.find_element_by_id('face').click()
 

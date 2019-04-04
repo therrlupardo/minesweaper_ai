@@ -21,15 +21,20 @@ class Board:
         self.width = width
         self.height = height
         self.mines_counter = mines_counter
+
         self.board = []
         for i in range(height):
             row = []
             for j in range(width):
                 row.append(Field(j, i))
             self.board.append(row)
+
         for row in self.board:
             for elem in row:
                 elem.neighbours = self.get_field_neighbours(elem)
+
+        self.neighbours_of_mines = []
+        self.mines = []
 
     def print(self):
         i = 0
