@@ -22,7 +22,7 @@ class LogicSolver(object):
         self.game_board.update_fields()
 
         while self.game_board.game.find_element_by_id('face').get_attribute(
-                "class") == 'facesmile' and self.calculate_game_time() < 999:
+                "class") == 'facesmile':  # and self.calculate_game_time() < 999:
             if self.game_board.mines_counter == 0:
                 self.game_board.click_all_square_blanks()
             else:
