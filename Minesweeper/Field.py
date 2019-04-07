@@ -1,23 +1,21 @@
 class Field:
-    is_mine = False             # pole jest mina
-    mine_neighbours: int = 0    # ile min na sąsiednich polach
-    is_mine_chance = 0.0        # szansa na obecność miny na tym polu
-    x = 0                       # (x,y) - lokacja miny na planszy
-    y = 0
-    game_id = ""
-    game_class = ""
-    clicked = False
-    neighbours_solved = False
-    neighbours = []
 
     def __init__(self, x, y):
+        # (x,y) - lokacja miny na planszy
         self.x = x
         self.y = y
-        self.game_id = str(y + 1) + "_" + str(x + 1)
-        self.game_class = "square blank"
 
-        # dla pewnosci
+        # pole jest mina
         self.is_mine = False
+
+        # ile min na sąsiednich polach
+        self.mine_neighbours: int = 0
+
+        # szansa na obecność miny na tym polu
+        # self.is_mine_chance = 0.0
+
+        self.game_id = str(y + 1) + '_' + str(x + 1)
+        self.game_class = 'square blank'
         self.clicked = False
         self.neighbours_solved = False
         self.neighbours = []
@@ -27,7 +25,7 @@ class Field:
 
     def set_game_class(self, game_class: ""):
         self.game_class = game_class
-        if game_class != "square blank":
+        if game_class != 'square blank':
             self.clicked = True
 
             self.mine_neighbours = {
@@ -49,8 +47,8 @@ class Field:
 
     def __str__(self):
         if self.is_mine:
-            return "M"
+            return 'M'
         elif self.clicked is False and self.mine_neighbours == 0:
-            return "-"
+            return '-'
         else:
             return str(self.mine_neighbours)

@@ -7,4 +7,6 @@ __pycache__/*
 ./*.log
 */*.log
 **/*.log
-
+./*.csv
+*/*.csv
+**/*.csv

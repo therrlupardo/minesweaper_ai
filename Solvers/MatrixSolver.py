@@ -1,11 +1,8 @@
 from math import floor
-from Minesweeper.Board import Board
 from Minesweeper.Field import Field
-import time
 
 
 class MatrixSolver:
-    game_board: Board
 
     def __init__(self, game_board):
         self.game_board = game_board  # needed only if playing only this strategy
@@ -15,13 +12,13 @@ class MatrixSolver:
 
         while self.matrix_method(self.game_board):
             self.game_board.update_fields()
-            if self.game_board.game.find_element_by_id("face").get_attribute("class") == "facewin":
+            if self.game_board.game.find_element_by_id('face').get_attribute('class') == 'facewin':
                 break
 
         if self.game_board.mines_counter == 0:
-            blanks = self.game_board.game.find_elements_by_class_name("square.blank")
+            blanks = self.game_board.game.find_elements_by_class_name('square.blank')
             for elem in blanks:
-                if elem.get_attribute("style") != "display: none;":
+                if elem.get_attribute('style') != 'display: none;':
                     elem.click()
 
         return self.game_board.update_fields() and self.game_board.mines_counter == 0
@@ -33,7 +30,7 @@ class MatrixSolver:
         # stwórz wektor pól, w których może być mina, które sąsiadują z polami ze znaną wartością
         for elem in game_board.neighbours_of_mines:
             for neighbour in elem.neighbours:
-                if neighbour.game_class == "square blank":
+                if neighbour.game_class == 'square blank':
                     if neighbour not in matrix_columns:
                         matrix_columns.append(neighbour)
 
@@ -52,7 +49,7 @@ class MatrixSolver:
         for elem in game_board.neighbours_of_mines:
             value = 0
             for neighbour in elem.neighbours:
-                if neighbour.game_class == "square bombflagged":
+                if neighbour.game_class == 'square bombflagged':
                     value += 1
 
             solutions.append(int(elem.mine_neighbours) - value)
@@ -74,19 +71,20 @@ class MatrixSolver:
                 for i in range(len(row) - 1):
                     if row[i] != 0:
                         elem: Field = matrix_columns[i]
-                        if neighbour.game_class == "square blank":
+                        if neighbour.game_class == 'square blank':
                             game_board.send_right_click(elem.y, elem.x)
                             changed_anything = True
             elif abs(sum) == sum_abs and row[-1] == 0:
                 for i in range(len(row) - 1):
                     if row[i] != 0:
                         elem: Field = matrix_columns[i]
-                        if neighbour.game_class == "square blank":
+                        if neighbour.game_class == 'square blank':
                             game_board.send_left_click(elem.y, elem.x)
                             changed_anything = True
         return changed_anything
 
-    def eliminate(self, matrix):
+    @staticmethod
+    def eliminate(matrix):
         cols = len(matrix[0])
         for i in range(0, min(cols - 1, len(matrix))):
             for j in range(i, len(matrix)):

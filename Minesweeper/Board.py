@@ -1,21 +1,17 @@
+import copy
+
 from selenium.webdriver import ActionChains
 from selenium.webdriver.firefox.webdriver import WebDriver
 from Minesweeper.Field import Field
 
 
 class Board:
-    height = 0
-    width = 0
-    mines_counter = 0
-    board = []
-    game: WebDriver
-    driver: WebDriver
-    field_values = ["square open0", "square open1", "square open2", "square open3", "square open4", "square open5",
-                    "square open6", "square open7", "square open8", "square bombflagged", "square bombrevealed"]
-    neighbours_of_mines = []
-    mines = []
+    # class variable:
+    field_values = ['square open0', 'square open1', 'square open2', 'square open3', 'square open4', 'square open5',
+                    'square open6', 'square open7', 'square open8', 'square bombflagged', 'square bombrevealed']
 
     def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
+        # instance variables:
         self.driver = driver
         self.game = game
         self.width = width
@@ -35,6 +31,8 @@ class Board:
 
         self.neighbours_of_mines = []
         self.mines = []
+        self.train_data = []
+        self.validation_data = []
 
     def print(self):
         i = 0
@@ -50,16 +48,16 @@ class Board:
             fields = self.game.find_elements_by_class_name(name.replace(' ', '.'))
 
             for field in fields:
-                field_id = field.get_attribute("id")
-                y, x = field_id.split("_")
+                field_id = field.get_attribute('id')
+                y, x = field_id.split('_')
                 elem = self.board[int(y) - 1][int(x) - 1]
                 if elem.game_class != name:
                     elem.set_game_class(name)
-                    if name not in ("square open0", "square blank", "square bombflagged", "square bombsreaveled"):
+                    if name not in ('square open0', 'square blank', 'square bombflagged', 'square bombsreaveled'):
                         self.neighbours_of_mines.append(elem)
 
             for elem in self.neighbours_of_mines:
-                if elem.game_class in ("square open0", "square blank", "square bombflagged", "square bombsreaveled"):
+                if elem.game_class in ('square open0', 'square blank', 'square bombflagged', 'square bombsreaveled'):
                     self.neighbours_of_mines.remove(elem)
                 elif elem.mine_neighbours == 'M' or elem.mine_neighbours == 'F':
                     self.neighbours_of_mines.remove(elem)
@@ -78,9 +76,13 @@ class Board:
     def send_right_click(self, y, x):
         elem: Field = self.board[y][x]
         if elem.game_id not in self.mines:
+            self.train_data.extend(self.generate_learning_data(y, x))
+            elem.set_game_class('square bombflagged')
+            self.validation_data.extend(self.generate_learning_data(y, x))
+
             action_chains = ActionChains(self.driver)
             action_chains.context_click(self.game.find_element_by_id(elem.game_id)).perform()
-            elem.set_game_class("square bombflagged")
+
             self.mines_counter -= 1
             self.mines.append(elem.game_id)
             return self.update_fields()
@@ -123,3 +125,29 @@ class Board:
                           self.board[y][x - 1], self.board[y][x + 1],
                           self.board[y + 1][x - 1], self.board[y + 1][x], self.board[y + 1][x + 1]]
         return neighbours
+
+    # y / x
+    #     0 1 2 3 4 5
+    # 0
+    # 1
+    # 2
+    # 3
+    # 4
+    # 5
+    #
+
+    def generate_learning_data(self, y, x):
+        matrix_size = 4
+        data = []
+
+        for y_shift in range(matrix_size):
+            for x_shift in range(matrix_size):
+                vector = []
+                for j in range(y - y_shift, y + matrix_size - y_shift):
+                    if 0 <= j < len(self.board):
+                        for i in range(x - x_shift, x + matrix_size - x_shift):
+                            if 0 <= i < len(self.board[0]):
+                                vector.append(copy.deepcopy(self.board[j][i]))
+                if len(vector) == matrix_size * matrix_size:
+                    data.append(vector)
+        return data
