@@ -45,7 +45,6 @@ class SimpleSolver:
                     elem.neighbours_solved = True
                     for neighbour in elem.neighbours:
                         if neighbour.game_class == 'square blank':
-                            # game_board.game.find_element_by_id(neighbour.game_id).click()
                             game_board.send_left_click(neighbour.y, neighbour.x)
                     changed_anything = True
 

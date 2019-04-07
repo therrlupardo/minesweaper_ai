@@ -28,8 +28,8 @@ class BrowserHandler:
 
             if logic_solver.play():
                 wins += 1
-                self.save_train_data(logic_solver)
-                self.save_validation_data(logic_solver)
+                # self.save_train_data(logic_solver)
+                # self.save_validation_data(logic_solver)
 
             time.sleep(2.0)
             print(str(i + 1) + '. test - winrate: ' + str(wins / (i + 1) * 100) + '%')

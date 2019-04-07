@@ -147,7 +147,9 @@ class Board:
                     if 0 <= j < len(self.board):
                         for i in range(x - x_shift, x + matrix_size - x_shift):
                             if 0 <= i < len(self.board[0]):
-                                vector.append(copy.deepcopy(self.board[j][i]))
+                                # vector.append(copy.deepcopy(self.board[j][i]))
+                                vector.append(copy.copy(self.board[j][i]))
+                #                 vector.append(copy.copy(self.board[j][i].mine_neighbours))
                 if len(vector) == matrix_size * matrix_size:
                     data.append(vector)
         return data
