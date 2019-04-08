@@ -34,12 +34,12 @@ class Model:
                       loss='sparse_categorical_crossentropy',
                       metrics=['accuracy'])
 
-        x_val = train_data[:8000]
-        partial_x_train = train_data[8000:]
-
-        y_val = train_labels[:8000]
-        partial_y_train = train_labels[8000:]
-
+        # x_val = train_data[:8000]
+        # partial_x_train = train_data[8000:]
+        #
+        # y_val = train_labels[:8000]
+        # partial_y_train = train_labels[8000:]
+        #
         # model.fit(partial_x_train,
         #           partial_y_train,
         #           epochs=20,
@@ -47,19 +47,19 @@ class Model:
         #           validation_data=(x_val, y_val),
         #           shuffle=True)
         #
-        # model.fit(train_data,
-        #           train_labels,
-        #           epochs=20,
-        #           batch_size=128,
-        #           shuffle=True)
-
-        model.fit(partial_x_train,
-                  partial_y_train,
+        model.fit(train_data,
+                  train_labels,
                   epochs=20,
                   batch_size=128,
                   shuffle=True)
 
-        model.evaluate(x_val, y_val)
+        # model.fit(partial_x_train,
+        #           partial_y_train,
+        #           epochs=20,
+        #           batch_size=128,
+        #           shuffle=True)
+        #
+        # model.evaluate(x_val, y_val)
         model.summary()
 
     @staticmethod
