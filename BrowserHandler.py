@@ -12,9 +12,9 @@ class BrowserHandler:
         games = 20
 
         driver = webdriver.Firefox()
-        driver.get("http://minesweeperonline.com/#beginner")
+        # driver.get("http://minesweeperonline.com/#beginner")
         # driver.get("http://minesweeperonline.com/#intermediate")
-        # driver.get("http://minesweeperonline.com")
+        driver.get("http://minesweeperonline.com")
         assert 'Minesweeper Online' in driver.title
 
         for i in range(games):
@@ -28,8 +28,8 @@ class BrowserHandler:
 
             if logic_solver.play():
                 wins += 1
-                # self.save_train_data(logic_solver)
-                # self.save_validation_data(logic_solver)
+                self.save_train_data(logic_solver)
+                self.save_validation_data(logic_solver)
 
             time.sleep(2.0)
             print(str(i + 1) + '. test - winrate: ' + str(wins / (i + 1) * 100) + '%')

@@ -40,18 +40,26 @@ class Model:
         y_val = train_labels[:8000]
         partial_y_train = train_labels[8000:]
 
-        model.fit(partial_x_train,
-                  partial_y_train,
-                  epochs=20,
-                  batch_size=128,
-                  validation_data=(x_val, y_val),
-                  shuffle=True)
+        # model.fit(partial_x_train,
+        #           partial_y_train,
+        #           epochs=20,
+        #           batch_size=128,
+        #           validation_data=(x_val, y_val),
+        #           shuffle=True)
         #
         # model.fit(train_data,
         #           train_labels,
         #           epochs=20,
         #           batch_size=128,
         #           shuffle=True)
+
+        model.fit(partial_x_train,
+                  partial_y_train,
+                  epochs=20,
+                  batch_size=128,
+                  shuffle=True)
+
+        model.evaluate(x_val, y_val)
         model.summary()
 
     @staticmethod
@@ -67,7 +75,7 @@ class Model:
 
         for row in range(len(labels)):
             tmp = np.subtract(labels[row], data[row])
-            tmp = np.where(tmp == 1)
+            tmp = np.where(tmp != 0)
             reformatted_labels.extend(tmp[0])
 
         return np.asarray(reformatted_labels)
