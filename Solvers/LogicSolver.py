@@ -10,7 +10,6 @@ from Solvers.SimpleSolver import SimpleSolver
 class LogicSolver(object):
 
     def __init__(self, driver: WebDriver, game: WebDriver, height, width, mines_counter):
-        self.game = game  # do liczenia czasu
         self.game_board = Board(driver, game, height, width, mines_counter)
         self.simple_solver = SimpleSolver(self.game_board)
         self.matrix_solver = MatrixSolver(self.game_board)
@@ -21,8 +20,7 @@ class LogicSolver(object):
 
         self.game_board.update_fields()
 
-        while self.game_board.game.find_element_by_id('face').get_attribute(
-                "class") == 'facesmile':  # and self.calculate_game_time() < 999:
+        while self.game_board.game.find_element_by_id('face').get_attribute("class") == 'facesmile':
             if self.game_board.mines_counter == 0:
                 self.game_board.click_all_square_blanks()
             else:
@@ -46,9 +44,3 @@ class LogicSolver(object):
 
         out = True if self.game_board.game.find_element_by_id('face').get_attribute('class') == 'facewin' else False
         return out
-
-    def calculate_game_time(self):
-        game_time = int(self.game.find_element_by_id('seconds_hundreds').get_attribute('class')[-1]) * 100
-        game_time += int(self.game.find_element_by_id('seconds_tens').get_attribute('class')[-1]) * 10
-        game_time += int(self.game.find_element_by_id('seconds_ones').get_attribute('class')[-1])
-        return game_time
