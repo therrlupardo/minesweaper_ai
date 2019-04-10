@@ -1,3 +1,4 @@
+import os
 import time
 from selenium import webdriver
 from Solvers.LogicSolver import LogicSolver
@@ -12,9 +13,12 @@ class BrowserHandler:
         games = 20
 
         driver = webdriver.Firefox()
-        # driver.get("http://minesweeperonline.com/#beginner")
-        # driver.get("http://minesweeperonline.com/#intermediate")
-        driver.get("http://minesweeperonline.com")
+
+
+        # nie działa ! driver.get("http://minesweeperonline.com#beginner")
+        # nie działa ! driver.get("http://minesweeperonline.com#intermediate")
+
+        driver.get("file:///{}/webpage/minesweeperonline.html".format(os.getcwd()))
         assert 'Minesweeper Online' in driver.title
 
         for i in range(games):
