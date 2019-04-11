@@ -52,7 +52,7 @@ class SimpleSolver:
                         if neighbour.game_class == 'square blank':
                             time1 = time.time()
                             game_board.send_left_click(neighbour.y, neighbour.x)
-                            clicking_time += time.time()-time1
+                            clicking_time += time.time() - time1
                     changed_anything = True
 
                 # wszystkie pola sąsiadujące to miny
@@ -62,12 +62,12 @@ class SimpleSolver:
 
                     for neighbour in elem.neighbours:
                         if neighbour.game_class == 'square blank':
-                            time1=time.time()
+                            time1 = time.time()
                             game_board.send_right_click(neighbour.y, neighbour.x)
-                            clicking_time += time.time()-time1
+                            clicking_time += time.time() - time1
                     changed_anything = True
         print("Time spent on clicking:", clicking_time)
-        print("Simple method overall:", time.time()-time0)
+        print("Simple method overall:", time.time() - time0)
         print("===========================")
         print()
         return changed_anything

@@ -59,7 +59,7 @@ class Board:
             for elem in self.neighbours_of_mines:
                 if elem.game_class in ('square open0', 'square blank', 'square bombflagged', 'square bombsreaveled'):
                     self.neighbours_of_mines.remove(elem)
-                elif elem.mine_neighbours == 'M' or elem.mine_neighbours == 'F':
+                elif elem.mine_neighbours == 11 or elem.mine_neighbours == 10:
                     self.neighbours_of_mines.remove(elem)
 
             if name == self.field_values[-1]:

@@ -1,6 +1,8 @@
 import os
 import time
 from selenium import webdriver
+
+from MLSolvers.MLSolver import MLSolver
 from Solvers.LogicSolver import LogicSolver
 
 
@@ -11,7 +13,6 @@ class BrowserHandler:
         games = 20
 
         driver = webdriver.Firefox()
-
 
         # nie działa ! driver.get("http://minesweeperonline.com#beginner")
         # nie działa ! driver.get("http://minesweeperonline.com#intermediate")
@@ -27,12 +28,13 @@ class BrowserHandler:
             mines_counter = self.count_mines(game)
 
             logic_solver = LogicSolver(driver, game, height, width, mines_counter)
+            # ml_solver = MLSolver(driver, game, height, width, mines_counter)
 
             if logic_solver.play():
                 wins += 1
 
-            self.save_train_data(logic_solver)
-            self.save_validation_data(logic_solver)
+            # self.save_train_data(ml_solver)
+            # self.save_validation_data(ml_solver)
 
             time.sleep(2.0)
             print(str(i + 1) + '. test - winrate: ' + str(wins / (i + 1) * 100) + '%')
