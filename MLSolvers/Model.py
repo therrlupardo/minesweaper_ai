@@ -20,12 +20,6 @@ class Model:
         # print(self.make_predictions(x_val))
         # print(y_val)
 
-    # przyjmuje jeden array 1x16!
-    def make_prediction(self, data):
-        prediction = self.model.predict(np.asarray([data], dtype=float))
-        label = np.argmax(prediction, axis=1)
-        return label.item(0)
-
     def train_model(self):
         train_data, train_labels = self.import_train_data('data/data.csv', 'data/labels.csv')
 
@@ -59,6 +53,11 @@ class Model:
 
         model.summary()
         return model
+
+    def make_prediction(self, data):
+        prediction = self.model.predict(np.asarray(data, dtype=float))
+        label = np.argmax(prediction, axis=1)
+        return np.asarray(label, dtype=int)
 
     @staticmethod
     def save_model(model):
