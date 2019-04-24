@@ -70,15 +70,19 @@ class Board:
 
     def send_left_click(self, y, x):
         elem: Field = self.board[y][x]
+
+        # self.train_data.extend(self.generate_learning_data(y, x))
+        # self.validation_data.extend(self.generate_learning_data(y, x))
+
         self.game.find_element_by_id(elem.game_id).click()
         return self.update_fields()
 
     def send_right_click(self, y, x):
         elem: Field = self.board[y][x]
         if elem.game_id not in self.mines:
-            self.train_data.extend(self.generate_learning_data(y, x))
+            # self.train_data.extend(self.generate_learning_data(y, x))
             elem.set_game_class('square bombflagged')
-            self.validation_data.extend(self.generate_learning_data(y, x))
+            # self.validation_data.extend(self.generate_learning_data(y, x))
 
             action_chains = ActionChains(self.driver)
             action_chains.context_click(self.game.find_element_by_id(elem.game_id)).perform()
@@ -97,7 +101,6 @@ class Board:
     def get_field_neighbours(self, elem):
         x, y = elem.x, elem.y
         # zwraca sąsiadów danego pola
-        neighbours = []
         if y == 0:
             if x == 0:
                 neighbours = [self.board[y + 1][x], self.board[y + 1][x + 1], self.board[y][x + 1]]
@@ -141,3 +144,19 @@ class Board:
                 if len(vector) == matrix_size * matrix_size:
                     data.append(vector)
         return data
+
+    def check_field_neighbours(self, y, x):
+        mines_counter = 0
+        for elem in self.board[y][x].neighbours:
+            if elem.game_class == 'square bombflagged':
+                mines_counter += 1
+
+        if mines_counter == self.board[y][x].mine_neighbours:
+            for elem in self.board[y][x].neighbours:
+                if elem.game_class == 'square blank':
+                    self.send_left_click(elem.y, elem.x)
+
+        if mines_counter > self.board[y][x].mine_neighbours:
+            for elem in self.board[y][x].neighbours:
+                if elem.game_class == 'square bombflagged':
+                    self.send_right_click(elem.y, elem.x)

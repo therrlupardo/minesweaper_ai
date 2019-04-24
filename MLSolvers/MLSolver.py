@@ -17,26 +17,34 @@ class MLSolver:
         self.game_board.send_left_click(floor(self.game_board.height / 2), floor(self.game_board.width / 2))
         self.game_board.update_fields()
 
-        # while self.game_board.game.find_element_by_id('face').get_attribute("class") == 'facesmile':
-        #     TODO
-        self.search_outline_fields()
+        while self.game_board.game.find_element_by_id('face').get_attribute("class") == 'facesmile':
+            self.search_outline_fields()
 
         return True if self.game_board.game.find_element_by_id('face').get_attribute('class') == 'facewin' else False
 
     def search_outline_fields(self):
         prediction_board = np.zeros([self.game_board.height, self.game_board.width], dtype=int)
         outline_fields = self.game_board.neighbours_of_mines
+        mines_coordinates = [list(), list()]
 
         for field in outline_fields:
             prediction_board = self.generate_prediction_board(field.y, field.x, prediction_board)
 
-        mines_coordinates = np.where(prediction_board == np.amax(prediction_board))
-        # where zwraca array zw wsp. y i drugi array ze wsp. x
+            coord = np.where(prediction_board == np.amax(prediction_board))
+            mines_coordinates[0].extend(coord[0])
+            mines_coordinates[1].extend(coord[1])
+            # where zwraca array zw wsp. y i drugi array ze wsp. x
+            prediction_board[mines_coordinates[0][0]][mines_coordinates[1][0]] = 0
 
-        # gdyby byly dwa pola o takiej samej wartosci:
+            # gdyby byly dwa pola o takiej samej wartosci:
         for i in range(len(mines_coordinates[0])):
             if self.game_board.board[mines_coordinates[0][i]][mines_coordinates[1][i]].game_class == 'square blank':
                 self.game_board.send_right_click(mines_coordinates[0][i], mines_coordinates[1][i])
+
+            # self.game_board.update_fields()
+
+        for field in outline_fields:
+            self.game_board.check_field_neighbours(field.y, field.x)
 
     def generate_prediction_board(self, y, x, prediction_board):
         matrix_size = 4
@@ -59,7 +67,8 @@ class MLSolver:
         y_mine, x_mine = self.predict_mine(predict_data)
 
         for i in range(len(coord)):
-            prediction_board[y_mine[i] + coord[i][0]][x_mine[i] + coord[i][1]] += 1
+            if y_mine[i] != -1:
+                prediction_board[y_mine[i] + coord[i][0]][x_mine[i] + coord[i][1]] += 1
 
         return prediction_board
 
@@ -67,7 +76,8 @@ class MLSolver:
         labels = self.model.make_prediction(data)
 
         matrix_size = 4
-        x = [label % matrix_size for label in labels]  # jak sie uda to szybciej na numpy elementwise
-        y = [int(label / matrix_size) for label in labels]
+        # jak sie uda to szybciej na numpy elementwise
+        x = [label % matrix_size if label != 16 else -1 for label in labels]  # TODO ???
+        y = [int(label / matrix_size) if label != 16 else -1 for label in labels]
 
         return np.asarray(y), np.asarray(x)

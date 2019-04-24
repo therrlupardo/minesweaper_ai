@@ -10,7 +10,7 @@ class BrowserHandler:
 
     def __init__(self):
         wins = 0
-        games = 20
+        games = 30
 
         driver = webdriver.Firefox()
 
@@ -60,7 +60,8 @@ class BrowserHandler:
 
     @staticmethod
     def save_train_data(logic_solver):
-        with open('data/data.csv', 'a') as file:
+        # with open('data/data.csv', 'a') as file:
+        with open('data.csv', 'a') as file:
             data = logic_solver.game_board.train_data
             for i in range(len(data)):
                 for j in range(len(data[0])):
@@ -69,7 +70,8 @@ class BrowserHandler:
 
     @staticmethod
     def save_validation_data(logic_solver):
-        with open('data/labels.csv', 'a') as file:
+        # with open('data/labels.csv', 'a') as file:
+        with open('labels.csv', 'a') as file:
             data = logic_solver.game_board.validation_data
             for i in range(len(data)):
                 for j in range(len(data[0])):
