@@ -50,11 +50,12 @@ class Board:
             for field in fields:
                 field_id = field.get_attribute('id')
                 y, x = field_id.split('_')
-                elem = self.board[int(y) - 1][int(x) - 1]
-                if elem.game_class != name:
-                    elem.set_game_class(name)
-                    if name not in ('square open0', 'square blank', 'square bombflagged', 'square bombsreaveled'):
-                        self.neighbours_of_mines.append(elem)
+                if field.get_attribute('style') != 'display: none;':
+                    elem = self.board[int(y) - 1][int(x) - 1]
+                    if elem.game_class != name:
+                        elem.set_game_class(name)
+                        if name not in ('square open0', 'square blank', 'square bombflagged', 'square bombsreaveled'):
+                            self.neighbours_of_mines.append(elem)
 
             for elem in self.neighbours_of_mines:
                 if elem.game_class in ('square open0', 'square blank', 'square bombflagged', 'square bombsreaveled'):
@@ -71,8 +72,8 @@ class Board:
     def send_left_click(self, y, x):
         elem: Field = self.board[y][x]
 
-        # self.train_data.extend(self.generate_learning_data(y, x))
-        # self.validation_data.extend(self.generate_learning_data(y, x))
+        self.train_data.extend(self.generate_learning_data(y, x))
+        self.validation_data.extend(self.generate_learning_data(y, x))
 
         self.game.find_element_by_id(elem.game_id).click()
         return self.update_fields()
@@ -90,6 +91,29 @@ class Board:
             self.mines_counter -= 1
             self.mines.append(elem.game_id)
             return self.update_fields()
+
+    def send_second_right_click(self, y, x):
+        elem: Field = self.board[y][x]
+        if elem.game_id in self.mines:
+            elem.set_game_class('square blank')
+            elem.mine_neighbours = 9
+
+            action_chains = ActionChains(self.driver)
+            action_chains.context_click(self.game.find_element_by_id(elem.game_id)).perform()
+
+            self.mines_counter += 1
+            self.mines.remove(elem.game_id)
+            return self.update_fields()
+
+    def send_left_right_click(self, y, x):
+        elem: Field = self.board[y][x]
+
+        action_chains = ActionChains(self.driver)
+        action_chains.click_and_hold(self.game.find_element_by_id(elem.game_id)).context_click(
+            self.game.find_element_by_id(elem.game_id)).release(self.game.find_element_by_id(elem.game_id)).perform()
+        # action_chains.context_click(self.game.find_element_by_id(elem.game_id)).perform()
+        # action_chains.release(self.game.find_element_by_id(elem.game_id)).perform()
+        return self.update_fields()
 
     def click_all_square_blanks(self):
         blanks = self.game.find_elements_by_class_name('square.blank')
@@ -151,12 +175,15 @@ class Board:
             if elem.game_class == 'square bombflagged':
                 mines_counter += 1
 
-        if mines_counter == self.board[y][x].mine_neighbours:
-            for elem in self.board[y][x].neighbours:
-                if elem.game_class == 'square blank':
-                    self.send_left_click(elem.y, elem.x)
-
         if mines_counter > self.board[y][x].mine_neighbours:
             for elem in self.board[y][x].neighbours:
                 if elem.game_class == 'square bombflagged':
-                    self.send_right_click(elem.y, elem.x)
+                    self.send_second_right_click(elem.y, elem.x)
+
+        if mines_counter == self.board[y][x].mine_neighbours and mines_counter != 0 and self.board[y][
+            x].neighbours_solved is False:
+            # for elem in self.board[y][x].neighbours:
+            #     if elem.game_class == 'square blank':
+            #         self.send_left_click(elem.y, elem.x)
+            self.send_left_right_click(y, x)
+            self.board[y][x].neighbours_solved = True
