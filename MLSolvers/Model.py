@@ -11,18 +11,18 @@ class Model:
         print(tf.__version__)
         # tf.debugging.set_log_device_placement(True)
 
-        # self.model = self.train_model()
+        self.model = self.train_model()
         # self.save_model(self.model)
 
-        self.model = self.load_model()
-        # train_data, train_labels = self.import_train_data('data/data.csv', 'data/labels.csv')
-        # x_val_2 = train_data[:30000]
-        # y_val_2 = train_labels[:30000]
-        # x_val = train_data[-30000:]
-        # y_val = train_labels[-30000:]
+        # self.model = self.load_model()
+        train_data, train_labels = self.import_train_data('data/data.csv', 'data/labels.csv')
+        x_val_2 = train_data[:30000]
+        y_val_2 = train_labels[:30000]
+        x_val = train_data[-30000:]
+        y_val = train_labels[-30000:]
         #
-        # print(self.model.evaluate(x_val, y_val))
-        # print(self.model.evaluate(x_val_2, y_val_2))
+        print(self.model.evaluate(x_val, y_val))
+        print(self.model.evaluate(x_val_2, y_val_2))
         # print(self.make_prediction(x_val))
         # print(y_val)
 
@@ -34,17 +34,18 @@ class Model:
 
         model = tf.keras.Sequential([
             # tf.keras.layers.GaussianDropout(0.2),
-            tf.keras.layers.Dense(256, activation=tf.nn.relu, input_shape=(16,)),
-            tf.keras.layers.Dense(256, activation=tf.nn.relu),
-            tf.keras.layers.Dense(256, activation=tf.nn.relu),
-            tf.keras.layers.Dense(256, activation=tf.nn.relu),
-            tf.keras.layers.Dense(256, activation=tf.nn.relu),
-            tf.keras.layers.GaussianDropout(0.2),
+            tf.keras.layers.Dense(300, activation=tf.nn.relu, input_shape=(16,)),
+            tf.keras.layers.Dense(300, activation=tf.nn.relu),
+            tf.keras.layers.Dense(300, activation=tf.nn.relu),
+            # tf.keras.layers.Dense(256, activation=tf.nn.relu),
+            # tf.keras.layers.Dense(256, activation=tf.nn.relu),
+            # tf.keras.layers.GaussianDropout(0.2),
             tf.keras.layers.Dense(17, activation=tf.nn.softmax)
         ])
 
         model.compile(optimizer=tf.keras.optimizers.Adam(),
                       loss='sparse_categorical_crossentropy',
+                      # loss='categorical_crossentropy',
                       metrics=['accuracy'])
 
         with tf.device('/device:GPU:0'):
@@ -61,6 +62,10 @@ class Model:
         prediction = self.model.predict(np.asarray(data, dtype=float))
         label = np.argmax(prediction, axis=1)
         return np.asarray(label, dtype=int)
+
+    def make_probabilities_prediction(self, data):
+        prediction = self.model.predict(np.asarray(data, dtype=float))
+        return np.asarray(prediction, dtype=float)
 
     @staticmethod
     def save_model(model):

@@ -3,6 +3,7 @@ import time
 from selenium import webdriver
 
 from MLSolvers.MLSolver import MLSolver
+from MLSolvers.Model import Model
 from Solvers.LogicSolver import LogicSolver
 
 
@@ -17,8 +18,11 @@ class BrowserHandler:
         # nie działa ! driver.get("http://minesweeperonline.com#beginner")
         # nie działa ! driver.get("http://minesweeperonline.com#intermediate")
 
+        # driver.get("http://minesweeperonline.com#beginner");
         driver.get("file:///{}/webpage/minesweeperonline.html".format(os.getcwd()))
         assert 'Minesweeper Online' in driver.title
+
+        # model = Model()
 
         for i in range(games):
             game = driver.find_element_by_id('game')
@@ -28,13 +32,13 @@ class BrowserHandler:
             mines_counter = self.count_mines(game)
 
             logic_solver = LogicSolver(driver, game, height, width, mines_counter)
-            # ml_solver = MLSolver(driver, game, height, width, mines_counter)
+            # ml_solver = MLSolver(driver, game, height, width, mines_counter, model)
 
             if logic_solver.play():
                 wins += 1
 
-            # self.save_train_data(logic_solver)
-            # self.save_validation_data(logic_solver)
+            self.save_train_data(logic_solver)
+            self.save_validation_data(logic_solver)
 
             time.sleep(2.0)
             print(str(i + 1) + '. test - winrate: ' + str(wins / (i + 1) * 100) + '%')
