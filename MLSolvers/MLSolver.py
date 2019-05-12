@@ -13,7 +13,7 @@ class MLSolver:
         self.game_board = Board(driver, game, height, width, mines_counter)
         # self.expected_game_board = [[0 for _ in range(height)] for _ in range(width)]
         # self.update_expected_game_board()
-        self.model = Model()
+        self.model = model
 
     # def update_expected_game_board(self):
     #     for i in range(len(self.expected_game_board)):
@@ -40,15 +40,14 @@ class MLSolver:
             prediction_board = self.generate_prediction_board(outline_fields[i].y, outline_fields[i].x,
                                                               prediction_board)
 
-        # lub z indent
         coord = np.where(prediction_board == np.amax(prediction_board))
+        # where zwraca array zw wsp. y i drugi array ze wsp. x
         mines_coordinates[0].extend(coord[0])
         mines_coordinates[1].extend(coord[1])
-        # where zwraca array zw wsp. y i drugi array ze wsp. x
 
-        # prediction_board[mines_coordinates[0][i]][mines_coordinates[1][i]] = 0
         prediction_board[mines_coordinates[0][0]][mines_coordinates[1][0]] = 0
 
+        # prediction_board[mines_coordinates[0][i]][mines_coordinates[1][i]] = 0
         # self.expected_game_board[mines_coordinates[0][i]][mines_coordinates[1][i]] = 10
         # self.expected_game_board[mines_coordinates[0][0]][mines_coordinates[1][0]] = 10
 
@@ -56,8 +55,6 @@ class MLSolver:
         for i in range(len(mines_coordinates[0])):
             if self.game_board.board[mines_coordinates[0][i]][mines_coordinates[1][i]].game_class == 'square blank':
                 self.game_board.send_right_click(mines_coordinates[0][i], mines_coordinates[1][i])
-
-            # self.game_board.update_fields()
 
         for field in outline_fields:
             self.game_board.check_field_neighbours(field.y, field.x)
@@ -95,8 +92,9 @@ class MLSolver:
         labels = self.model.make_prediction(data)
 
         matrix_size = 4
-        # jak sie uda to szybciej na numpy elementwise
-        x = [label % matrix_size if label != 16 else -1 for label in labels]  # TODO ???
+
+        x = [label % matrix_size if label != 16 else -1 for label in
+             labels]  # TODO jak sie uda to szybciej na numpy elementwise
         y = [int(label / matrix_size) if label != 16 else -1 for label in labels]
 
         return np.asarray(y), np.asarray(x)
@@ -107,7 +105,6 @@ class MLSolver:
         matrix_size = 4
 
         for i in range(len(probabilities)):
-            # for j in range(len(probabilities)):
             for k in range(len(probabilities[0]) - 1):  # na ostatniej pozycji prawdopodobienstwo braku miny
                 prediction_board[int(k / matrix_size) + coord[i][0]][k % matrix_size + coord[i][1]] += probabilities[i][
                     k]

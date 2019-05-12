@@ -3,5 +3,5 @@ numpy==1.16.3
 selenium==3.141.0
 tensorflow-gpu==2.0.0a0
 tensorflow==2.0.0a0
-python==3.7.0
-
+python==3.6.7
+pydatalog

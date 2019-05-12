@@ -81,6 +81,7 @@ class Board:
     def send_right_click(self, y, x):
         elem: Field = self.board[y][x]
         if elem.game_id not in self.mines:
+
             # self.train_data.extend(self.generate_learning_data(y, x))
             elem.set_game_class('square bombflagged')
             # self.validation_data.extend(self.generate_learning_data(y, x))
@@ -111,8 +112,7 @@ class Board:
         action_chains = ActionChains(self.driver)
         action_chains.click_and_hold(self.game.find_element_by_id(elem.game_id)).context_click(
             self.game.find_element_by_id(elem.game_id)).release(self.game.find_element_by_id(elem.game_id)).perform()
-        # action_chains.context_click(self.game.find_element_by_id(elem.game_id)).perform()
-        # action_chains.release(self.game.find_element_by_id(elem.game_id)).perform()
+
         return self.update_fields()
 
     def click_all_square_blanks(self):
@@ -182,8 +182,5 @@ class Board:
 
         if mines_counter == self.board[y][x].mine_neighbours and mines_counter != 0 and self.board[y][
             x].neighbours_solved is False:
-            # for elem in self.board[y][x].neighbours:
-            #     if elem.game_class == 'square blank':
-            #         self.send_left_click(elem.y, elem.x)
             self.send_left_right_click(y, x)
-            self.board[y][x].neighbours_solved = True
+            self.board[y][x].neighbours_solved = True    #TODO left right click MLSolver?

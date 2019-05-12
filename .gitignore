@@ -8,3 +8,7 @@ __pycache__/*
 */*.log
 **/*.log
 ./*.csv
+*.csv
+*/logs/*
+logs/*
+
