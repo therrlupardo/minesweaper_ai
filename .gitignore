@@ -8,3 +8,11 @@ __pycache__/*
 */*.log
 **/*.log
 ./*.csv
+*.csv
+*/logs/*
+logs/*
+sprawozdanie/sprawozdanie.aux
+sprawozdanie/sprawozdanie.fdb_latexmk
+sprawozdanie/sprawozdanie.fls
+sprawozdanie/sprawozdanie.log
+sprawozdanie/sprawozdanie.synctex.gz
