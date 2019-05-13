@@ -25,17 +25,16 @@ class Model:
         print(train_labels.shape)
 
         model = tf.keras.Sequential([
-            # tf.keras.layers.GaussianDropout(0.2),
             tf.keras.layers.Dense(512, activation=tf.nn.relu, input_shape=(16,)),
             tf.keras.layers.Dense(512, activation=tf.nn.relu),
             tf.keras.layers.Dense(512, activation=tf.nn.relu),
-            # tf.keras.layers.Dense(256, activation=tf.nn.relu),
-            # tf.keras.layers.Dense(256, activation=tf.nn.relu),
+            tf.keras.layers.Dense(512, activation=tf.nn.relu),
+            # tf.keras.layers.Dense(512, activation=tf.nn.relu),
             # tf.keras.layers.GaussianDropout(0.2),
             tf.keras.layers.Dense(17, activation=tf.nn.softmax)
         ])
 
-        model.compile(optimizer=tf.keras.optimizers.Adam(),  # keras.optimizers.SGD(lr=0.2)
+        model.compile(optimizer=tf.keras.optimizers.Adam(),
                       loss='sparse_categorical_crossentropy',
                       # loss='categorical_crossentropy',
                       metrics=['accuracy'])
@@ -47,6 +46,9 @@ class Model:
         y_val = train_labels[:30000]
         x_val2 = np.concatenate((x_val, train_data[-30000:]))
         y_val2 = np.concatenate((y_val, train_labels[-30000:]))
+
+        train_data = train_data[30000:-30000]
+        train_labels = train_labels[30000:-30000]
 
         with tf.device('/device:GPU:0'):
             model.fit(train_data,

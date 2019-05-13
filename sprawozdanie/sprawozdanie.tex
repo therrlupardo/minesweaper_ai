@@ -152,9 +152,27 @@ nie pozwala na wyliczenie ich położenia. Pomyłki występują wyłącznie w pr
 tworzono do 16 macierzy rozmiaru 4x4, które uwzględniały położenie pola na każdej z 16 możliwych pozycji. Miało to na celu nauczenie sieci odpowiednich wzorców z uwzględnieniem otoczenia wybranego
 pola. Rozmiar macierzy 5x5 mogłby być zbyt duży w przypadku małej planszy (10x10), a wymiar 3x3 mógłby nie dostarczać odpowiedniej ilości informacji. Macierze przekształcano na wektory o długości
 16, które stanowiły dane do trenowania sieci. Sieć wykorzystano do klasyfikacji. Etykiety stanowiło położenie miny w wektorze (0-15) lub liczba 16 w przypadku braku miny na przekazanym fragmencie planszy.
+Wygenerowano około 1.000.000 wektorów treningowych, w tym po 500.000 przypadków danych pozytywnych i negatywnych.\\
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.75]{generating.png}
+    \caption{Sposób generowania danych wejściowych.}
+\end{figure} \\
+
 \subsubsection*{Opis sieci}
-Sieć składa się z trzech warstw gęstych o 512 neuronach i warstwy gęstej wyjściowej o 17 neuronach. Zastosowanie warstwy zapobiegającej przetrenowaniu nieznacznie pogarsza skuteczność sieci przy zastosowaniu danych testowych, 
-więc finalnie nie została ona użyta.
+Sieć składa się z czterech warstw gęstych o 512 neuronach i warstwy gęstej wyjściowej o 17 neuronach. Zastosowanie warstwy zapobiegającej przetrenowaniu nieznacznie pogarsza skuteczność sieci przy zastosowaniu danych testowych (ilość 50.000), 
+więc finalnie nie została ona użyta. 
+Jako funkcji straty użyto funkcji sparse categorical crossentropy, jako funkcji optymalizującej funkcji Adam. Wykresy skuteczności i wartości funkcji straty dla kolejnych epok podczas treningu:
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.85]{gaussian.png}
+    \caption{Wykresy skuteczności z zastosowaniem warstwy zapobiegajacej przetrenowaniu i bez jej użycia.}
+\end{figure} \\
+
+\subsubsection*{Rozwiązywanie}
+Dla każdego odkrytego pola z wartością numeryczną generowane jest do 16 macierzy 4x4. Korzystając z prawdopodobieństw przynależności do każdej z klas (oprócz ostatniej) zwróconych przez sieć neuronową, uzupełniana jest tablica wielkości planszy,
+w której zawarte są prawdopodobieństwa wystąpenia miny na danym polu. Po oznaczeniu pola, na którym z największym prawdopodobieństwem znajduje się mina algorytm sprawdza, czy występują jakiekolwiek pola, dla których wszystkie miny zostały już znalezione. W przypadku sukcesu, 
+odsłaniane są pozostałe pola z nimi graniczące.
 \subsection{Prolog}
 Dodana została jeszcze metoda oparta o proste reguły logiczne napisane w języku logicznym bazującym na prologu (pyDataLog).
 Metoda iteruje po wszystkich polach sąsiadujących z miejscami, gdzie potencjalnie mogłaby być bomba.
