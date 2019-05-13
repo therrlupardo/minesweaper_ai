@@ -15,9 +15,9 @@ class BrowserHandler:
 
         driver = webdriver.Firefox()
 
-        # driver.get("file:///{}/webpage/minesweeperonline.html#beginner".format(os.getcwd()))
+        driver.get("file:///{}/webpage/minesweeperonline.html#beginner".format(os.getcwd()))
         # driver.get("file:///{}/webpage/minesweeperonline.html#intermediate".format(os.getcwd()))
-        driver.get("file:///{}/webpage/minesweeperonline.html".format(os.getcwd()))
+        # driver.get("file:///{}/webpage/minesweeperonline.html".format(os.getcwd()))
         assert 'Minesweeper Online' in driver.title
 
         model = Model()
