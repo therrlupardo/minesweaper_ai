@@ -1,4 +1,3 @@
-import time
 from math import floor
 from Minesweeper.Field import Field
 
@@ -25,10 +24,6 @@ class MatrixSolver:
         return self.game_board.update_fields() and self.game_board.mines_counter == 0
 
     def matrix_method(self, game_board):
-        print()
-        print("===========================")
-        time0 = time.time()
-        time1 = time0
         changed_anything = False
         matrix = []
         matrix_columns = []
@@ -39,9 +34,6 @@ class MatrixSolver:
                 if neighbour.game_class == 'square blank':
                     if neighbour not in matrix_columns:
                         matrix_columns.append(neighbour)
-        print("Creating vector of neighbours of mines:", time.time()-time1)
-        time1 = time.time()
-
 
         # uzupełnij macierz
         for elem in game_board.neighbours_of_mines:
@@ -52,8 +44,6 @@ class MatrixSolver:
                 else:
                     matrix_row.append(0)
             matrix.append(matrix_row)
-        print("Creating vector of possible mines:", time.time() - time1)
-        time1 = time.time()
 
         # stwórz wektor rozwiązań
         solutions = []
@@ -64,17 +54,12 @@ class MatrixSolver:
                     value += 1
 
             solutions.append(int(elem.mine_neighbours) - value)
-        print("Creating vector of mines around:", time.time() - time1)
-        time1 = time.time()
 
         for i in range(len(matrix)):
             matrix[i].append(solutions[i])
 
         matrix = self.eliminate(matrix)
 
-        print("Matrix elimination:", time.time() - time1)
-        time1 = time.time()
-        clicking_time = 0.0
         for row in matrix:
             sum_abs = 0
             sum = 0
@@ -87,28 +72,17 @@ class MatrixSolver:
                 for i in range(len(row) - 1):
                     if row[i] != 0:
                         elem: Field = matrix_columns[i]
-                        if neighbour.game_class == 'square blank':
-                            time2=time.time()
+                        if elem.game_class == 'square blank':
                             game_board.send_right_click(elem.y, elem.x)
-                            clicking_time += time.time()-time2
                             changed_anything = True
             elif abs(sum) == sum_abs and row[-1] == 0:
                 for i in range(len(row) - 1):
                     if row[i] != 0:
                         elem: Field = matrix_columns[i]
-                        if neighbour.game_class == 'square blank':
-                            time2 = time.time()
+                        if elem.game_class == 'square blank':
                             game_board.send_left_click(elem.y, elem.x)
-                            clicking_time += time.time()-time2
                             changed_anything = True
 
-        print("Applying calculations to board:", time.time() - time1)
-        print("Time spent on clicking:", clicking_time)
-        time1 = time.time()
-
-        print("Matrix method overall:", time.time()-time0)
-        print("===========================")
-        print()
         return changed_anything
 
     @staticmethod

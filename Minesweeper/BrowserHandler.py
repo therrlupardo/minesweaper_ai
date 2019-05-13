@@ -2,25 +2,31 @@ import os
 import time
 from selenium import webdriver
 
-from MLSolvers.MLSolver import MLSolver
-from MLSolvers.Model import Model
 from Solvers.LogicSolver import LogicSolver
+from MLSolvers.MLSolver import MLSolver
+from PrologSolvers.PrologSolver import PrologSolver
+from MLSolvers.Model import Model
 
 
 class BrowserHandler:
 
-    def __init__(self):
+    def __init__(self, size, method):
         wins = 0
         games = 30
 
         driver = webdriver.Firefox()
 
-        driver.get("file:///{}/webpage/minesweeperonline.html#beginner".format(os.getcwd()))
-        # driver.get("file:///{}/webpage/minesweeperonline.html#intermediate".format(os.getcwd()))
-        # driver.get("file:///{}/webpage/minesweeperonline.html".format(os.getcwd()))
+        if size is 's':
+            driver.get("file:///{}/webpage/minesweeperonline.html#beginner".format(os.getcwd()))
+        elif size is 'm':
+            driver.get("file:///{}/webpage/minesweeperonline.html#intermediate".format(os.getcwd()))
+        elif size is 'l':
+            driver.get("file:///{}/webpage/minesweeperonline.html".format(os.getcwd()))
+
         assert 'Minesweeper Online' in driver.title
 
         model = Model()
+        solver = None
 
         for i in range(games):
             game = driver.find_element_by_id('game')
@@ -29,10 +35,14 @@ class BrowserHandler:
 
             mines_counter = self.count_mines(game)
 
-            # logic_solver = LogicSolver(driver, game, height, width, mines_counter)
-            ml_solver = MLSolver(driver, game, height, width, mines_counter, model)
+            if method is 's':
+                solver = LogicSolver(driver, game, height, width, mines_counter)
+            elif method is 'm':
+                solver = MLSolver(driver, game, height, width, mines_counter, model)
+            elif method is 'l':
+                solver = PrologSolver(driver, game, height, width, mines_counter)
 
-            if ml_solver.play():
+            if solver.play():
                 wins += 1
 
             # self.save_train_data(logic_solver)
@@ -40,6 +50,7 @@ class BrowserHandler:
 
             time.sleep(2.0)
             print(str(i + 1) + '. test - winrate: ' + str(wins / (i + 1) * 100) + '%')
+            print("Won: " + str(wins) + ", lost: " + str(i+1-wins))
             driver.find_element_by_id('face').click()
 
             if self.page_has_loaded(driver):

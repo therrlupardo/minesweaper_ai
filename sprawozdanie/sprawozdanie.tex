@@ -1,22 +1,37 @@
-\documentclass{article} % use option titlepage to get the title on a page of its own.
+\documentclass[letterpaper,12pt]{article} % use option titlepage to get the title on a page of its own.
 \usepackage{polski}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{graphicx}
-\usepackage[a4paper, total={7in, 10in}]{geometry}
+%\usepackage[a4paper, total={7in, 10in}]{geometry}
 \usepackage{listings}
-\usepackage{amsmath}
+\usepackage{tabularx} % extra features for tabular environment
+\usepackage{amsmath}  % improve math presentation
+\usepackage{mathtools}
+\usepackage[margin=1in,letterpaper]{geometry} % decreases margins
+\usepackage{cite} % takes care of citations
+\usepackage{float}
+\usepackage{tabto}
+
 \graphicspath{ {./images/} }
-\title{Rozwiązywanie Sapera za pomocą sztucznej inteligencji}
+\title{Rozwiązywanie Sapera z pomocą sztucznej inteligencji}
 \date{04.05.2019}
-\author{Dominika Zembrzuska, Kacper Ziółkowski, Mateusz Buchajewicz}
+\author{ Mateusz Buchajewicz, Dominika Zembrzuska, Kacper Ziółkowski}
+
 \begin{document}
 \maketitle
 
 \section{Wprowadzenie}
-Celem projektu jest utworzenie algorytmów opartych na sztucznej inteligencji rozwiązujących popularną grę Saper.
+Celem projektu jest utworzenie trzech algorytmów rozwiązujących popularną grę Saper.
+
 \section{Zasady sapera}
+
 \section{Wykorzystane technologie}
-\section{Opis algorytmu}
+Projekt został napisany w języku Python, korzysta z wersji online gry Saper znajdującej się pod adresem $minesweeperonline.com$. Obsługa okna przeglądarki zrealizowana 
+została z pomocą pakietu selenium. Sieć neuronowa została utworzona przy pomocy pakietu tensorflow, a do uzyskiwania rozwiązań przy zastosowaniu zasad napisanych w Prologu
+użyto pakietu PyDatalog.
+
+\section{Opisy algorytmów}
 \subsection{Bot generujący dane}
 
 Bot działa w oparciu o 3 główne metody rozwiązujące:
@@ -25,7 +40,7 @@ Bot działa w oparciu o 3 główne metody rozwiązujące:
     \item{Rozwiązywanie za pomocą układów równań}
     \item{Strzelanie w losowe pole}    
 \end{itemize}
-\subsubsection{Rozwiązywanie za pomocą prostej logiki}
+\subsubsection*{Rozwiązywanie za pomocą prostej logiki}
 Sprawdza po kolei wszystkie pola planszy, zawierające wartość numeryczną. 
 Jeśli liczba pól sąsiadujących ze sprawdzanym polem, a nieoznaczonych jako
 "bez miny" (czyli zarówno oznaczonych jako "miny", jak i pustych) jest taka
@@ -33,7 +48,7 @@ jak wartość pola, to wszystkie te pola są oznaczane jako miny.
 Natomiast jeżeli liczba oznaczonych min na polach sąsiadujących jest równa wartości 
 sprawdzanego pola, to wszystkie pozostałe pola sąsiadujące zostają oznaczone jako "bez miny"
 \newpage
-\subsubsection{Rozwiązywanie za pomocą układów równań}
+\subsubsection*{Rozwiązywanie za pomocą układów równań}
 Metoda opiera się na ułożeniu układu równań z pól na planszy oraz rozwiązaniu go. 
 Algorytm przekształca układ równań na macierz n x m, gdzie n jest liczbą oznaczonych 
 pól z wyznaczoną wartością, a m jest liczbą różnych pól nieoznaczonych z nimi sąsiadujących.\\
@@ -124,14 +139,27 @@ $$
 
 Analogicznie jak wyżej, wszystkie pola z wartością 1 algorytm oznacza jako pola "z miną", a te z wartością 0 jako "bez miny".
 
-\subsubsection{Strzelanie w losowe pole}
+\subsubsection*{Strzelanie w losowe pole}
 Ta metoda jest używana wtedy i tylko wtedy, gdy obie powyższe po przejrzeniu całej planszy
 nie dadzą rady oznaczyć ani jednego pola. Algorytm wybiera losowo jedno z nieoznaczonych pól
 i oznacza je jako pole "bez miny". Jeśli oznaczy poprawnie gra jest kontynuowana z wykorzystaniem
  powyższych metod. Jeśli pole nie zostało poprawnie oznaczone, gra jest zakończona porażką.
 
 \subsection{Sieć neuronowa}
+\subsubsection*{Dane uczące}
+Dane uczące wygenerowane zostały przy pomocy bota. Po wykonaniu obliczeń oznacza on miny w sposób poprawny, błędy występują w przypadku, gdy obecny stan planszy
+nie pozwala na wyliczenie ich położenia. Pomyłki występują wyłącznie w przypadku oddania strzału, dane po niecelnym strzale nie zostawały uwzględnione. Po wybraniu pola na planszy, 
+tworzono do 16 macierzy rozmiaru 4x4, które uwzględniały położenie pola na każdej z 16 możliwych pozycji. Miało to na celu nauczenie sieci odpowiednich wzorców z uwzględnieniem otoczenia wybranego
+pola. Rozmiar macierzy 5x5 mogłby być zbyt duży w przypadku małej planszy (10x10), a wymiar 3x3 mógłby nie dostarczać odpowiedniej ilości informacji. Macierze przekształcano na wektory o długości
+16, które stanowiły dane do trenowania sieci. Sieć wykorzystano do klasyfikacji. Etykiety stanowiło położenie miny w wektorze (0-15) lub liczba 16 w przypadku braku miny na przekazanym fragmencie planszy.
+\subsubsection*{Opis sieci}
+Sieć składa się z trzech warstw gęstych o 512 neuronach i warstwy gęstej wyjściowej o 17 neuronach. Zastosowanie warstwy zapobiegającej przetrenowaniu nieznacznie pogarsza skuteczność sieci przy zastosowaniu danych testowych, 
+więc finalnie nie została ona użyta.
 \subsection{Prolog}
+Dodana została jeszcze metoda oparta o proste reguły logiczne napisane w języku logicznym bazującym na prologu (pyDataLog).
+Metoda iteruje po wszystkich polach sąsiadujących z miejscami, gdzie potencjalnie mogłaby być bomba.
+Dla każdego pola zlicza ile jest sąsiadujących nieodkrytych pól oraz oznaczonych flagą, i na tej podstawie wnioskuje czy w sąsiadujących nieodkrytych polach jest bomba czy nie.
+
 \section{Porównanie metod}
 Bot osiąga około 85-90\% skuteczności na małych planszach (10x10, 10 min) 
 oraz około 10-15\% na dużych planszach (30x15, 99 min).

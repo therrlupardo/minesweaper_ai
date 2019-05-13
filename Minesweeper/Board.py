@@ -72,8 +72,8 @@ class Board:
     def send_left_click(self, y, x):
         elem: Field = self.board[y][x]
 
-        self.train_data.extend(self.generate_learning_data(y, x))
-        self.validation_data.extend(self.generate_learning_data(y, x))
+        # self.train_data.extend(self.generate_learning_data(y, x))
+        # self.validation_data.extend(self.generate_learning_data(y, x))
 
         self.game.find_element_by_id(elem.game_id).click()
         return self.update_fields()
@@ -81,7 +81,6 @@ class Board:
     def send_right_click(self, y, x):
         elem: Field = self.board[y][x]
         if elem.game_id not in self.mines:
-
             # self.train_data.extend(self.generate_learning_data(y, x))
             elem.set_game_class('square bombflagged')
             # self.validation_data.extend(self.generate_learning_data(y, x))
@@ -183,4 +182,4 @@ class Board:
         if mines_counter == self.board[y][x].mine_neighbours and mines_counter != 0 and self.board[y][
             x].neighbours_solved is False:
             self.send_left_right_click(y, x)
-            self.board[y][x].neighbours_solved = True    #TODO left right click MLSolver?
+            self.board[y][x].neighbours_solved = True  # TODO left right click MLSolver?

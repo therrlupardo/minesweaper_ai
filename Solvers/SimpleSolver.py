@@ -1,6 +1,4 @@
-import time
 from math import floor
-from Minesweeper.Field import Field
 
 
 class SimpleSolver:
@@ -25,17 +23,12 @@ class SimpleSolver:
     @staticmethod
     def simple_method(game_board):
 
-        print()
-        print("===========================")
-        time0 = time.time()
         changed_anything = False
-        clicking_time = 0.0
         for elem in game_board.neighbours_of_mines:
             if elem.mine_neighbours != 0 and elem.neighbours_solved is False:
 
                 possibilities = 0
                 flagged = 0
-                neighbour: Field
 
                 for neighbour in elem.neighbours:
                     if neighbour.game_class == 'square blank':
@@ -50,9 +43,7 @@ class SimpleSolver:
                     elem.neighbours_solved = True
                     for neighbour in elem.neighbours:
                         if neighbour.game_class == 'square blank':
-                            time1 = time.time()
                             game_board.send_left_click(neighbour.y, neighbour.x)
-                            clicking_time += time.time() - time1
                     changed_anything = True
 
                 # wszystkie pola sąsiadujące to miny
@@ -62,12 +53,7 @@ class SimpleSolver:
 
                     for neighbour in elem.neighbours:
                         if neighbour.game_class == 'square blank':
-                            time1 = time.time()
                             game_board.send_right_click(neighbour.y, neighbour.x)
-                            clicking_time += time.time() - time1
                     changed_anything = True
-        print("Time spent on clicking:", clicking_time)
-        print("Simple method overall:", time.time() - time0)
-        print("===========================")
-        print()
+
         return changed_anything

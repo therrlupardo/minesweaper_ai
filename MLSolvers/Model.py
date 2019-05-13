@@ -17,19 +17,9 @@ class Model:
         # self.save_model(self.model)
 
         self.model = self.load_model()
-        # train_data, train_labels = self.import_train_data('data/data.csv', 'data/labels.csv')
-        # x_val_2 = train_data[:30000]        #first 30000 elemsents
-        # y_val_2 = train_labels[:30000]
-        # x_val = train_data[-30000:]
-        # y_val = train_labels[-30000:]
-
-        # print(self.model.evaluate(x_val, y_val))
-        # print(self.model.evaluate(x_val_2, y_val_2))
-        # print(self.make_prediction(x_val))
-        # print(y_val)
 
     def train_model(self):
-        train_data, train_labels = self.import_train_data('data/data.csv', 'data/labels.csv')
+        train_data, train_labels = self.import_train_data('data/p_data.csv', 'data/p_labels.csv', 'data/n_data.csv')
 
         print(train_data.shape)
         print(train_labels.shape)
@@ -58,14 +48,15 @@ class Model:
         x_val2 = np.concatenate((x_val, train_data[-30000:]))
         y_val2 = np.concatenate((y_val, train_labels[-30000:]))
 
-        # with tf.device('/device:GPU:0'):
-        model.fit(train_data,
-                  train_labels,
-                  epochs=20,
-                  batch_size=512,
-                  shuffle=True,
-                  validation_data=(x_val2, y_val2),
-                  callbacks=[tensorboard_callback])
+        with tf.device('/device:GPU:0'):
+            model.fit(train_data,
+                      train_labels,
+                      epochs=20,
+                      batch_size=512,
+                      shuffle=True,
+                      validation_data=(x_val2, y_val2),
+                      callbacks=[tensorboard_callback]
+                      )
 
         model.summary()
         return model
@@ -88,10 +79,16 @@ class Model:
         model = tf.keras.models.load_model('models/model2.h5')
         return model
 
-    def import_train_data(self, data_filename, labels_filename):
-        train_data = self.import_data(data_filename)
-        train_labels = self.import_data(labels_filename)
-        train_labels = self.reformat_labels(train_data, train_labels)
+    def import_train_data(self, positive_data_filename, positive_labels_filename, negative_data_filename):
+        positive_train_data = self.import_data(positive_data_filename)
+        positive_train_labels = self.import_data(positive_labels_filename)
+        reformatted_positive_labels = self.reformat_positive_labels(positive_train_data, positive_train_labels)
+
+        negative_train_data = self.import_data(negative_data_filename)
+        reformatted_negative_labels = self.reformat_negative_labels(negative_train_data)
+
+        train_data = np.concatenate((positive_train_data, negative_train_data))
+        train_labels = np.concatenate((reformatted_positive_labels, reformatted_negative_labels))
 
         return train_data, train_labels
 
@@ -104,7 +101,7 @@ class Model:
         return np.asarray(data, dtype=float)
 
     @staticmethod
-    def reformat_labels(data, labels):
+    def reformat_positive_labels(data, labels):
         reformatted_labels = []
 
         for row in range(len(labels)):
@@ -112,9 +109,13 @@ class Model:
             tmp = np.where(tmp != 0)
             reformatted_labels.extend(tmp[0])
 
-        tmp = len(labels) - len(reformatted_labels)
+        return np.asarray(reformatted_labels)
 
-        for _ in range(len(labels) - len(reformatted_labels)):  # TODO !!!!
+    @staticmethod
+    def reformat_negative_labels(data):
+        reformatted_labels = []
+
+        for _ in range(len(data)):
             tmp = [16]
             reformatted_labels.extend(tmp)
 
