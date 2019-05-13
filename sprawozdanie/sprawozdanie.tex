@@ -162,13 +162,22 @@ Wygenerowano około 1.000.000 wektorów treningowych, w tym po 500.000 przypadk�
 \subsubsection*{Opis sieci}
 Sieć składa się z czterech warstw gęstych o 512 neuronach i warstwy gęstej wyjściowej o 17 neuronach. Zastosowanie warstwy zapobiegającej przetrenowaniu nieznacznie pogarsza skuteczność sieci przy zastosowaniu danych testowych (ilość 50.000), 
 więc finalnie nie została ona użyta. 
-Jako funkcji straty użyto funkcji sparse categorical crossentropy, jako funkcji optymalizującej funkcji Adam. Wykresy skuteczności i wartości funkcji straty dla kolejnych epok podczas treningu:
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.85]{gaussian.png}
     \caption{Wykresy skuteczności z zastosowaniem warstwy zapobiegajacej przetrenowaniu i bez jej użycia.}
 \end{figure} \\
-
+Jako funkcji straty użyto funkcji sparse categorical crossentropy, jako funkcji optymalizującej funkcji Adam. Wykresy skuteczności i wartości funkcji straty dla kolejnych epok podczas treningu:
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.6]{skutecznosc.png}
+    \caption{Wykres skuteczności w czasie treningu w kolejnych epokach.}
+\end{figure} \\
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.6]{funkcjastraty.png}
+    \caption{Wykres wartości funkcji straty podczas treningu w kolejnych epokach.}
+\end{figure} \\
 \subsubsection*{Rozwiązywanie}
 Dla każdego odkrytego pola z wartością numeryczną generowane jest do 16 macierzy 4x4. Korzystając z prawdopodobieństw przynależności do każdej z klas (oprócz ostatniej) zwróconych przez sieć neuronową, uzupełniana jest tablica wielkości planszy,
 w której zawarte są prawdopodobieństwa wystąpenia miny na danym polu. Po oznaczeniu pola, na którym z największym prawdopodobieństwem znajduje się mina algorytm sprawdza, czy występują jakiekolwiek pola, dla których wszystkie miny zostały już znalezione. W przypadku sukcesu, 
