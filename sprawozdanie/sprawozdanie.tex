@@ -1,36 +1,55 @@
-\documentclass[letterpaper,12pt]{article} % use option titlepage to get the title on a page of its own.
+\documentclass[letterpaper,12pt]{article}
 \usepackage{polski}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{graphicx}
-%\usepackage[a4paper, total={7in, 10in}]{geometry}
-\usepackage{listings}
 \usepackage{tabularx} % extra features for tabular environment
 \usepackage{amsmath}  % improve math presentation
 \usepackage{mathtools}
+\usepackage{graphicx} % takes care of graphic including machinery
 \usepackage[margin=1in,letterpaper]{geometry} % decreases margins
 \usepackage{cite} % takes care of citations
+\usepackage[final]{hyperref} % adds hyper links inside the generated pdf file
 \usepackage{float}
 \usepackage{tabto}
 
+\hypersetup{
+	colorlinks=true,       % false: boxed links; true: colored links
+	linkcolor=blue,        % color of internal links
+	citecolor=blue,        % color of links to bibliography
+	filecolor=magenta,     % color of file links
+	urlcolor=blue         
+}
+
+
 \graphicspath{ {./images/} }
+
+\begin{document}
 \title{Rozwiązywanie Sapera z pomocą sztucznej inteligencji}
 \date{04.05.2019}
 \author{ Mateusz Buchajewicz, Dominika Zembrzuska, Kacper Ziółkowski}
-
-\begin{document}
 \maketitle
 
 \section{Wprowadzenie}
-Celem projektu jest utworzenie trzech algorytmów rozwiązujących popularną grę Saper.
+Celem projektu jest utworzenie trzech algorytmów rozwiązujących popularną grę Saper.\\
 
 \section{Zasady sapera}
+Celem gry jest oznaczenie wszystkich min na planszy. Domyślne warianty gry obejmują
+planszę małą (o wymiarach 10x10 i zawierającą 10 min), średnią (16x16, 40 min)
+oraz dużą (16x30, 99 min). Gracz może oznaczać pola z miną prawym przyciskiem
+myszy oraz lewym pola bez niej. Odkrycie pola bez miny odsłania je,
+wyświetlając na nim jego wartość od 1 do 8, równoważną ilości
+min na polach sąsiadujących. Ponadto zostają też odsłonięte wszystkie są
+siadujące pola, które nie mają wartość 0 oraz te z nimi graniczące. Możliwe też jest 
+naciśnięcie pola numerycznego prawym i lewym przyciskiem myszy jednocześnie, gdy oznaczone
+zostały wszystkie miny w jego sąsiedztwie. Powoduje to odsłonięcie pozostałych nieodsłoniętych pół.
+Gra kończy się wygraną, jeśli gracz oznacz poprawnie wszystkie miny i pola bez nich.
+Gracz przegrywa, jeśli wskaże pole zawierające minę jako pole bez niej.\\
 
 \section{Wykorzystane technologie}
 Projekt został napisany w języku Python, korzysta z wersji online gry Saper znajdującej się pod adresem $minesweeperonline.com$. Obsługa okna przeglądarki zrealizowana 
 została z pomocą pakietu selenium. Sieć neuronowa została utworzona przy pomocy pakietu tensorflow, a do uzyskiwania rozwiązań przy zastosowaniu zasad napisanych w Prologu
 użyto pakietu PyDatalog.
-
+\newpage
 \section{Opisy algorytmów}
 \subsection{Bot generujący dane}
 
@@ -47,7 +66,7 @@ Jeśli liczba pól sąsiadujących ze sprawdzanym polem, a nieoznaczonych jako
 jak wartość pola, to wszystkie te pola są oznaczane jako miny.
 Natomiast jeżeli liczba oznaczonych min na polach sąsiadujących jest równa wartości 
 sprawdzanego pola, to wszystkie pozostałe pola sąsiadujące zostają oznaczone jako "bez miny"
-\newpage
+
 \subsubsection*{Rozwiązywanie za pomocą układów równań}
 Metoda opiera się na ułożeniu układu równań z pól na planszy oraz rozwiązaniu go. 
 Algorytm przekształca układ równań na macierz n x m, gdzie n jest liczbą oznaczonych 
@@ -74,7 +93,7 @@ $$
  A + B + C + F = 1 \\
 \end{cases}
 $$
-
+\newpage
 Co z kolei można zapisać w postaci macierzy: \\
 
 \[
@@ -99,22 +118,27 @@ więc algorytm nie może określić dokładnych wartości wszystkich zmiennych. 
 przekształcić tę macierz za pomocą operacji elementarnych do takiej postaci, żeby
 mógł odczytać z niej jak najwięcej wartości zmiennych. 
 \[
-\begin{bmatrix}
-    1 & 1 & 0 & 0 & 0 & 0 & | & 1\\
-    1 & 1 & 1 & 0 & 0 & 0 & | & 1\\
-    0 & 0 & 0 & 1 & 1 & 0 & | & 1 \\
-    0 & 0 & 0 & 0 & 1 & 1 & | & 1\\
-    1 & 1 & 1 & 0 & 0 & 1 & | & 1\\
-\end{bmatrix}
+\left[
+\begin{array}{cccccc|c}
+    1 & 1 & 0 & 0 & 0 & 0 & 1\\
+    1 & 1 & 1 & 0 & 0 & 0 & 1\\
+    0 & 0 & 0 & 1 & 1 & 0 & 1 \\
+    0 & 0 & 0 & 0 & 1 & 1 & 1\\
+    1 & 1 & 1 & 0 & 0 & 1 & 1\\
+\end{array}
+\right]
 \longrightarrow
-\begin{bmatrix}
-    1 & 1 & 0 & 0 & 0 & 0 & | & 1\\
-    0 & 0 & 1 & 0 & 0 & 0 & | & 0\\
-    0 & 0 & 0 & 1 & 0 & 0 & | & 0 \\
-    0 & 0 & 0 & 0 & 1 & 0 & | & 1\\
-    0 & 0 & 0 & 0 & 0 & 1 & | & 0\\
-\end{bmatrix}
+\left[
+\begin{array}{cccccc|c}
+    1 & 1 & 0 & 0 & 0 & 0 & 1\\
+    0 & 0 & 1 & 0 & 0 & 0 & 0\\
+    0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 1 & 0 & 1\\
+    0 & 0 & 0 & 0 & 0 & 1 & 0\\
+\end{array}
+\right]
 \] \\
+
 Co jest tożsame z układem równań:\\
 $$
 \begin{cases}
@@ -152,36 +176,36 @@ nie pozwala na wyliczenie ich położenia. Pomyłki występują wyłącznie w pr
 tworzono do 16 macierzy rozmiaru 4x4, które uwzględniały położenie pola na każdej z 16 możliwych pozycji. Miało to na celu nauczenie sieci odpowiednich wzorców z uwzględnieniem otoczenia wybranego
 pola. Rozmiar macierzy 5x5 mogłby być zbyt duży w przypadku małej planszy (10x10), a wymiar 3x3 mógłby nie dostarczać odpowiedniej ilości informacji. Macierze przekształcano na wektory o długości
 16, które stanowiły dane do trenowania sieci. Sieć wykorzystano do klasyfikacji. Etykiety stanowiło położenie miny w wektorze (0-15) lub liczba 16 w przypadku braku miny na przekazanym fragmencie planszy.
-Wygenerowano około 1.000.000 wektorów treningowych, w tym po 500.000 przypadków danych pozytywnych i negatywnych.\\
-\begin{figure}[h]
+Wygenerowano około 1.000.000 wektorów treningowych, w tym po około 500.000 przypadków danych pozytywnych i negatywnych.\\
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.75]{generating.png}
     \caption{Sposób generowania danych wejściowych.}
-\end{figure} \\
+\end{figure}
 
 \subsubsection*{Opis sieci}
 Sieć składa się z czterech warstw gęstych o 512 neuronach i warstwy gęstej wyjściowej o 17 neuronach. Zastosowanie warstwy zapobiegającej przetrenowaniu nieznacznie pogarsza skuteczność sieci przy zastosowaniu danych testowych (ilość 50.000), 
 więc finalnie nie została ona użyta. 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.85]{gaussian.png}
-    \caption{Wykresy skuteczności z zastosowaniem warstwy zapobiegajacej przetrenowaniu i bez jej użycia.}
-\end{figure} \\
-Jako funkcji straty użyto funkcji sparse categorical crossentropy, jako funkcji optymalizującej funkcji Adam. Wykresy skuteczności i wartości funkcji straty dla kolejnych epok podczas treningu:
-\begin{figure}[h]
+    \caption{Wykresy skuteczności danych testowych z zastosowaniem warstwy zapobiegajacej przetrenowaniu i bez jej użycia.}
+\end{figure} 
+Jako funkcji straty użyto funkcji sparse categorical crossentropy, jako funkcji optymalizującej funkcji adam. Wykresy skuteczności i wartości funkcji straty dla kolejnych epok podczas treningu:
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.6]{skutecznosc.png}
     \caption{Wykres skuteczności w czasie treningu w kolejnych epokach.}
-\end{figure} \\
-\begin{figure}[h]
+\end{figure} 
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.6]{funkcjastraty.png}
     \caption{Wykres wartości funkcji straty podczas treningu w kolejnych epokach.}
-\end{figure} \\
+\end{figure} 
 \subsubsection*{Rozwiązywanie}
 Dla każdego odkrytego pola z wartością numeryczną generowane jest do 16 macierzy 4x4. Korzystając z prawdopodobieństw przynależności do każdej z klas (oprócz ostatniej) zwróconych przez sieć neuronową, uzupełniana jest tablica wielkości planszy,
 w której zawarte są prawdopodobieństwa wystąpenia miny na danym polu. Po oznaczeniu pola, na którym z największym prawdopodobieństwem znajduje się mina algorytm sprawdza, czy występują jakiekolwiek pola, dla których wszystkie miny zostały już znalezione. W przypadku sukcesu, 
-odsłaniane są pozostałe pola z nimi graniczące.
+odsłaniane są pozostałe pola z nimi graniczące. W przypadku wykrycia pola, z którym graniczy więcej min niż wskazuje jego wartość numeryczna, wszystkie graniczne miny są odznaczane z planszy. 
 \subsection{Prolog}
 Dodana została jeszcze metoda oparta o proste reguły logiczne napisane w języku logicznym bazującym na prologu (pyDataLog).
 Metoda iteruje po wszystkich polach sąsiadujących z miejscami, gdzie potencjalnie mogłaby być bomba.
@@ -197,11 +221,17 @@ oraz około 10-15\% na dużych planszach (30x15, 99 min).
         \hline
         Bot & 85-90 & 10-15 \\
         \hline
-        Sieć neuronowa & ? & ? \\
+        Sieć neuronowa & 90-95 & 0 \\
         \hline
         Logika / prolog & ? & ? \\
         \hline
     \end{tabular}
 \end{center}
 \section{Wnioski}
+W przypadku dużej planszy metoda rozwiązywania z pomocą sieci neuronowej jest nieskuteczna. Bot oznacza miny na tej planszy poprawnie, 
+myli się w przypadku, gdy stan planszy nie pozwala na wyliczenie ich położenia i jest zmuszony do oddania strzału. Skuteczność wytrenowanej sieci
+wynosi około 75\%, więc nie jest ona w stanie oznaczyć wszystkich min dokładnie, tak jak bot, co wpływa na końcową skuteczność metody.
+W tym przypadku, bardziej skuteczne mogłoby być wykorzystanie sieci neuronowej z regresją, która sama uczyłaby się zasad gry, albo algorytmu 
+genetycznego, który starałby się nie doprowadzić do sytuacji, w której musi byhć oddany strzał.
+
 \end{document}
