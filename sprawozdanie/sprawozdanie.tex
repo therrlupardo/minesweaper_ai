@@ -31,7 +31,7 @@
 
 \section{Wprowadzenie}
 Celem projektu jest utworzenie trzech algorytmów rozwiązujących popularną grę Saper.\\
-
+\hfill \break
 \section{Zasady sapera}
 Celem gry jest oznaczenie wszystkich min na planszy. Domyślne warianty gry obejmują
 planszę małą (o wymiarach 10x10 i zawierającą 10 min), średnią (16x16, 40 min)
@@ -44,11 +44,12 @@ naciśnięcie pola numerycznego prawym i lewym przyciskiem myszy jednocześnie, 
 zostały wszystkie miny w jego sąsiedztwie. Powoduje to odsłonięcie pozostałych nieodsłoniętych pół.
 Gra kończy się wygraną, jeśli gracz oznacz poprawnie wszystkie miny i pola bez nich.
 Gracz przegrywa, jeśli wskaże pole zawierające minę jako pole bez niej.\\
+\hfill \break
 
 \section{Wykorzystane technologie}
 Projekt został napisany w języku Python, korzysta z wersji online gry Saper znajdującej się pod adresem $minesweeperonline.com$. Obsługa okna przeglądarki zrealizowana 
 została z pomocą pakietu selenium. Sieć neuronowa została utworzona przy pomocy pakietu tensorflow, a do uzyskiwania rozwiązań przy zastosowaniu zasad napisanych w Prologu
-użyto pakietu PyDatalog.
+użyto pakietu PyDataLog.
 \newpage
 \section{Opisy algorytmów}
 \subsection{Bot generujący dane}
@@ -57,7 +58,7 @@ Bot działa w oparciu o 3 główne metody rozwiązujące:
 \begin{itemize}
     \item{Rozwiązywanie za pomocą prostej logiki}
     \item{Rozwiązywanie za pomocą układów równań}
-    \item{Strzelanie w losowe pole}    
+    \item{Strzelanie w losowe pole}    \\
 \end{itemize}
 \subsubsection*{Rozwiązywanie za pomocą prostej logiki}
 Sprawdza po kolei wszystkie pola planszy, zawierające wartość numeryczną. 
@@ -66,15 +67,16 @@ Jeśli liczba pól sąsiadujących ze sprawdzanym polem, a nieoznaczonych jako
 jak wartość pola, to wszystkie te pola są oznaczane jako miny.
 Natomiast jeżeli liczba oznaczonych min na polach sąsiadujących jest równa wartości 
 sprawdzanego pola, to wszystkie pozostałe pola sąsiadujące zostają oznaczone jako "bez miny"
-
+\hfill \break
 \subsubsection*{Rozwiązywanie za pomocą układów równań}
 Metoda opiera się na ułożeniu układu równań z pól na planszy oraz rozwiązaniu go. 
 Algorytm przekształca układ równań na macierz n x m, gdzie n jest liczbą oznaczonych 
 pól z wyznaczoną wartością, a m jest liczbą różnych pól nieoznaczonych z nimi sąsiadujących.\\
-Dla przykładu, poniższa plansza:
+\newpage
+Dla przykładu, poniższa plansza:\\
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.5]{matrix_first.png}
+    \includegraphics[scale=0.65]{matrix_first.png}
     \caption{Przykładowa plansza sapera}
 \end{figure} \\
 Zostanie przekształcona do postaci:\\
@@ -83,6 +85,7 @@ Zostanie przekształcona do postaci:\\
     \includegraphics[scale=0.5]{matrix_marked.png}
     \caption{Przykładowa plansza sapera z polami oznaczonymi jako zmienne}
 \end{figure} \\
+
 Otrzymany układ równań: \\
 $$
 \begin{cases}
@@ -95,7 +98,6 @@ $$
 $$
 \newpage
 Co z kolei można zapisać w postaci macierzy: \\
-
 \[
 \begin{bmatrix}
     1 & 1 & 0 & 0 & 0 & 0 \\
@@ -116,7 +118,7 @@ Co z kolei można zapisać w postaci macierzy: \\
 Macierz główna nie jest macierzą kwadratową (a przynajmniej nie zawsze), 
 więc algorytm nie może określić dokładnych wartości wszystkich zmiennych. Może jednak 
 przekształcić tę macierz za pomocą operacji elementarnych do takiej postaci, żeby
-mógł odczytać z niej jak najwięcej wartości zmiennych. 
+mógł odczytać z niej jak najwięcej wartości zmiennych. \\
 \[
 \left[
 \begin{array}{cccccc|c}
@@ -138,7 +140,6 @@ mógł odczytać z niej jak najwięcej wartości zmiennych.
 \end{array}
 \right]
 \] \\
-
 Co jest tożsame z układem równań:\\
 $$
 \begin{cases}
@@ -149,18 +150,18 @@ $$
  F = 0 \\
 \end{cases}
 $$
-
+\hfill \break
 W tym przypadku doskonale widać, że pole E zawiera minę, natomiast pola C, D, F jej nie zawierają. 
 O polach A i B nic nie wiadomo, co wynika z faktu iż macierz główna nie jest kwadratowa. \\
 Warto jednak zauważyć, że operacje podstawowe nie zawsze zwrócą wartość 0 lub 1. W ogólności
-algorytm sprawdza otrzymane wyniki za pomocą prostych warunków: 
+algorytm sprawdza otrzymane wyniki za pomocą prostych warunków: \\
 $$
 \begin{cases}
  \text{if } \forall{(a_{i} \in M_{j}^W)} \text{ } |\sum{a_{i}}| = \sum{|a_{i}| = |b_{j}|}  \text{ then } x_{j}=1 \\
  \text{if } \forall{(a_{i} \in M_{j}^W)} \text{ } |\sum{a_{i}}| = \sum{|a_{i}|} = 0 \text{ then } x_{j}=0 \\
 \end{cases}
 $$
-
+\hfill \break
 Analogicznie jak wyżej, wszystkie pola z wartością 1 algorytm oznacza jako pola "z miną", a te z wartością 0 jako "bez miny".
 
 \subsubsection*{Strzelanie w losowe pole}
@@ -207,13 +208,18 @@ Dla każdego odkrytego pola z wartością numeryczną generowane jest do 16 maci
 w której zawarte są prawdopodobieństwa wystąpenia miny na danym polu. Po oznaczeniu pola, na którym z największym prawdopodobieństwem znajduje się mina algorytm sprawdza, czy występują jakiekolwiek pola, dla których wszystkie miny zostały już znalezione. W przypadku sukcesu, 
 odsłaniane są pozostałe pola z nimi graniczące. W przypadku wykrycia pola, z którym graniczy więcej min niż wskazuje jego wartość numeryczna, wszystkie graniczne miny są odznaczane z planszy. 
 \subsection{Prolog}
-Dodana została jeszcze metoda oparta o proste reguły logiczne napisane w języku logicznym bazującym na prologu (pyDataLog).
-Metoda iteruje po wszystkich polach sąsiadujących z miejscami, gdzie potencjalnie mogłaby być bomba.
-Dla każdego pola zlicza ile jest sąsiadujących nieodkrytych pól oraz oznaczonych flagą, i na tej podstawie wnioskuje czy w sąsiadujących nieodkrytych polach jest bomba czy nie.
-
+Kolejna metoda oparta jest o proste reguły logiczne napisane w języku logicznym bazującym na prologu (pyDataLog).
+Metoda iteruje po wszystkich polach sąsiadujących z miejscami, gdzie potencjalnie mogłaby znajdować się mina.
+Dla każdego pola zlicza ona ilość sąsiadujących nieodkrytych pól oraz tych oznaczonych flagą, i na tej podstawie wnioskuje czy w sąsiadujących nieodsłoniętych polach znajduje się mina czy nie.
+Reguły są opisane w następujący sposób:
+\begin{itemize}
+    \item{Gdy liczba pól oznaczonych flagą równa się wartości sprawdzonego pola, to wszystkie inne puste pola zostają odkryte.}
+    \item{Gdy liczba pól nieodkrytyh zsumowana z liczbą pól oznaczonych flagą daje w wyniku wartość sprawdzonego pola, to na sąsiadujących pustych polach są miny, więc zostają one oznaczone flagą.}
+\end{itemize}
+Te dwie zasady mogą rozwiązać większość sytuacji, które występują na planszy, co daje efektywność rozwiązywania 65\% do 70\% wygranych gier na poziomie podstawowym.
+Metoda jednak nie radzi sobie z trudniejszymi poziomami, które w znacznej większości gier wymagają umiejętności myślenia w przód, czego podane proste reguły logiczne nie potrafią
+\hfill \break
 \section{Porównanie metod}
-Bot osiąga około 85-90\% skuteczności na małych planszach (10x10, 10 min) 
-oraz około 10-15\% na dużych planszach (30x15, 99 min).
 \begin{center} 
     \begin{tabular}  { | l | c | r |   }
         \hline
@@ -223,15 +229,20 @@ oraz około 10-15\% na dużych planszach (30x15, 99 min).
         \hline
         Sieć neuronowa & 90-95 & 0 \\
         \hline
-        Logika / prolog & ? & ? \\
+        Logika / prolog & 60-70 & 0  \\
         \hline
     \end{tabular}
 \end{center}
 \section{Wnioski}
 W przypadku dużej planszy metoda rozwiązywania z pomocą sieci neuronowej jest nieskuteczna. Bot oznacza miny na tej planszy poprawnie, 
-myli się w przypadku, gdy stan planszy nie pozwala na wyliczenie ich położenia i jest zmuszony do oddania strzału. Skuteczność wytrenowanej sieci
-wynosi około 75\%, więc nie jest ona w stanie oznaczyć wszystkich min dokładnie, tak jak bot, co wpływa na końcową skuteczność metody.
+myli się w przypadku, gdy stan planszy nie pozwala na wyliczenie ich położenia i jest zmuszony do oddania strzału. Skuteczność bota mogłaby zostać poprawiona, gdyby
+brać pod uwagę prawdopodobieństwo obecności miny na danym polu, występują jednak sytuacje, w których obecność miny na jednym z danych pól jest równoprawdopodobna.\\
+  Skuteczność wytrenowanej sieci
+wynosi około 75\%, więc nie jest ona w stanie oznaczyć wszystkich min tak dokładnie jak bot, co wpływa na końcową skuteczność metody.
 W tym przypadku, bardziej skuteczne mogłoby być wykorzystanie sieci neuronowej z regresją, która sama uczyłaby się zasad gry, albo algorytmu 
-genetycznego, który starałby się nie doprowadzić do sytuacji, w której musi byhć oddany strzał.
+genetycznego, który starałby się nie doprowadzić do sytuacji, w której musi być oddany strzał. Sieć neuronowa z klasyfikacją może nie być w stanie rozwiązać problemu.\\
+Wyniki przedstawione w tabeli powyżej mogą byc przekłamane dla dużej planszy, ze względu na niewystarczającą ilość
+przeprowadzonych testów. Wykonana w dany sposób obsługa okna przeglądarki jest kosztowna czasowo, co wpływa na czas wykonywania testów.
+
 
 \end{document}
